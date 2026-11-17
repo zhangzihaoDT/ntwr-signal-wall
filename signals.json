@@ -39,6 +39,68 @@
           "quantity": "3400"
         }
       ],
+      "position_view": {
+        "account_view": "MANUAL_NO_REPORTED_FILLS",
+        "confirmation": "CONFIRMED_FLAT",
+        "confirmed_flat_through": "2026-11-16",
+        "entry_gap": "0.02",
+        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_signal": "BUY",
+        "entry_weight": "0.02",
+        "example_capital_cny": "100000",
+        "executed": false,
+        "opening_scenarios": [
+          {
+            "after_weight": "0.01990511886341729289636453064",
+            "before_weight": "0",
+            "candidate_open_price": "1.327",
+            "change_pp": "1.990511886341729289636453064",
+            "execution": "BUY",
+            "fee_cny": "0.5971500",
+            "notional_cny": "1990.500",
+            "notional_pct_nav": "0.019905",
+            "quantity": "1500"
+          },
+          {
+            "after_weight": "0.01895610779959383473021934381",
+            "before_weight": "0",
+            "candidate_open_price": "1.354",
+            "change_pp": "1.895610779959383473021934381",
+            "execution": "BUY",
+            "fee_cny": "0.5686800",
+            "notional_cny": "1895.600",
+            "notional_pct_nav": "0.018956",
+            "quantity": "1400"
+          },
+          {
+            "after_weight": "0.01933411214171724438836090137",
+            "before_weight": "0",
+            "candidate_open_price": "1.381",
+            "change_pp": "1.933411214171724438836090137",
+            "execution": "BUY",
+            "fee_cny": "0.5800200",
+            "notional_cny": "1933.400",
+            "notional_pct_nav": "0.019334",
+            "quantity": "1400"
+          }
+        ],
+        "provenance": "user-confirmed-in-chat-2026-11-17",
+        "recorded_shares": "0",
+        "recorded_weight": "0",
+        "reference_open": {
+          "after_weight": "0.01895610779959383473021934381",
+          "before_weight": "0",
+          "candidate_open_price": "1.354",
+          "change_pp": "1.895610779959383473021934381",
+          "execution": "BUY",
+          "fee_cny": "0.5686800",
+          "notional_cny": "1895.600",
+          "notional_pct_nav": "0.018956",
+          "quantity": "1400"
+        },
+        "schema_version": 1,
+        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+      },
       "price_condition": {
         "basis": "frozen_target_next_open_min_notional_and_lot_checked",
         "comparison": "<=",
@@ -108,6 +170,68 @@
           "quantity": "6700"
         }
       ],
+      "position_view": {
+        "account_view": "MANUAL_NO_REPORTED_FILLS",
+        "confirmation": "CONFIRMED_FLAT",
+        "confirmed_flat_through": "2026-11-16",
+        "entry_gap": "0.02",
+        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_signal": "BUY",
+        "entry_weight": "0.02",
+        "example_capital_cny": "100000",
+        "executed": false,
+        "opening_scenarios": [
+          {
+            "after_weight": "0.01932011197936903242291192320",
+            "before_weight": "0",
+            "candidate_open_price": "1.380",
+            "change_pp": "1.932011197936903242291192320",
+            "execution": "BUY",
+            "fee_cny": "0.5796000",
+            "notional_cny": "1932.000",
+            "notional_pct_nav": "0.01932",
+            "quantity": "1400"
+          },
+          {
+            "after_weight": "0.01971211656957254582420698603",
+            "before_weight": "0",
+            "candidate_open_price": "1.408",
+            "change_pp": "1.971211656957254582420698603",
+            "execution": "BUY",
+            "fee_cny": "0.5913600",
+            "notional_cny": "1971.200",
+            "notional_pct_nav": "0.019712",
+            "quantity": "1400"
+          },
+          {
+            "after_weight": "0.01866810454885271539474729674",
+            "before_weight": "0",
+            "candidate_open_price": "1.436",
+            "change_pp": "1.866810454885271539474729674",
+            "execution": "BUY",
+            "fee_cny": "0.5600400",
+            "notional_cny": "1866.800",
+            "notional_pct_nav": "0.018668",
+            "quantity": "1300"
+          }
+        ],
+        "provenance": "user-confirmed-in-chat-2026-11-17",
+        "recorded_shares": "0",
+        "recorded_weight": "0",
+        "reference_open": {
+          "after_weight": "0.01971211656957254582420698603",
+          "before_weight": "0",
+          "candidate_open_price": "1.408",
+          "change_pp": "1.971211656957254582420698603",
+          "execution": "BUY",
+          "fee_cny": "0.5913600",
+          "notional_cny": "1971.200",
+          "notional_pct_nav": "0.019712",
+          "quantity": "1400"
+        },
+        "schema_version": 1,
+        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+      },
       "price_condition": {
         "basis": "frozen_target_next_open_min_notional_and_lot_checked",
         "comparison": "<=",
@@ -177,6 +301,68 @@
           "quantity": "0"
         }
       ],
+      "position_view": {
+        "account_view": "MANUAL_NO_REPORTED_FILLS",
+        "confirmation": "CONFIRMED_FLAT",
+        "confirmed_flat_through": "2026-11-16",
+        "entry_gap": "0.02",
+        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_signal": "BUY",
+        "entry_weight": "0.02",
+        "example_capital_cny": "100000",
+        "executed": false,
+        "opening_scenarios": [
+          {
+            "after_weight": "0.01857710353205569449959101567",
+            "before_weight": "0",
+            "candidate_open_price": "1.429",
+            "change_pp": "1.857710353205569449959101567",
+            "execution": "BUY",
+            "fee_cny": "0.5573100",
+            "notional_cny": "1857.700",
+            "notional_pct_nav": "0.018577",
+            "quantity": "1300"
+          },
+          {
+            "after_weight": "0.01895410777684764071105461120",
+            "before_weight": "0",
+            "candidate_open_price": "1.458",
+            "change_pp": "1.895410777684764071105461120",
+            "execution": "BUY",
+            "fee_cny": "0.5686200",
+            "notional_cny": "1895.400",
+            "notional_pct_nav": "0.018954",
+            "quantity": "1300"
+          },
+          {
+            "after_weight": "0.01933111210691844165211867313",
+            "before_weight": "0",
+            "candidate_open_price": "1.487",
+            "change_pp": "1.933111210691844165211867313",
+            "execution": "BUY",
+            "fee_cny": "0.5799300",
+            "notional_cny": "1933.100",
+            "notional_pct_nav": "0.019331",
+            "quantity": "1300"
+          }
+        ],
+        "provenance": "user-confirmed-in-chat-2026-11-17",
+        "recorded_shares": "0",
+        "recorded_weight": "0",
+        "reference_open": {
+          "after_weight": "0.01895410777684764071105461120",
+          "before_weight": "0",
+          "candidate_open_price": "1.458",
+          "change_pp": "1.895410777684764071105461120",
+          "execution": "BUY",
+          "fee_cny": "0.5686200",
+          "notional_cny": "1895.400",
+          "notional_pct_nav": "0.018954",
+          "quantity": "1300"
+        },
+        "schema_version": 1,
+        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+      },
       "price_condition": null,
       "reference_open": {
         "after_weight": "0.6963237247633633706828600278",

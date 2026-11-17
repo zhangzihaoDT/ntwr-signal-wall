@@ -82,7 +82,7 @@
       <div class="hero-copy">
         <div class="eyebrow">159680.SZ / NTWR-A / DAILY LOG</div>
         <h1>每日交易信号<br>灵感墙<span style="color:#9dd4bf">.</span></h1>
-        <p class="hero-sub">一张卡片，记录一天的市场判断。2% 固定首仓 · SMA250 动态再平衡。按日期自动归档，所有历史信号都能回看。</p>
+        <p class="hero-sub">一张卡片，记录一天的市场判断。优先显示已申报的实际持仓；未入场时仅给出 2% 首仓参考，历史策略模拟数据保留追溯。</p>
         <div class="hero-links"><a class="hero-link" href="#signal-wall">浏览每日卡片 ↓</a><a class="hero-link" href="https://github.com/zhangzihaoDT/grid-trading/actions/workflows/ntwr-a-159680-daily.yml" target="_blank" rel="noreferrer">查看运行记录 ↗</a></div>
       </div>
       <div class="hero-metrics">
@@ -97,7 +97,7 @@
       <div class="stat"><div class="stat-label">策略首仓</div><div class="stat-value">2<span style="font-size:16px">%</span></div></div>
     </section>
     <main id="signal-wall">
-      <div class="section-head"><div><h2>交易日卡片</h2><p>最新在前 · 点击卡片展开开盘价情景 · 无有效行情不增加卡片</p></div>
+      <div class="section-head"><div><h2>交易日卡片</h2><p>未成交不等于已建仓 · 实际仓位以手工记录为准 · 详情保留原策略回放</p></div>
         <div class="filters" role="group" aria-label="按信号筛选">
           <button class="filter" type="button" data-filter="ALL" aria-pressed="true">全部</button>
           <button class="filter" type="button" data-filter="BUY" aria-pressed="false">BUY</button>
@@ -108,7 +108,7 @@
       <div id="cards" class="wall" aria-live="polite"><div class="empty">正在加载已核验的交易日信号…</div></div>
     </main>
     <footer class="footer">
-      <div><b>关于本页面</b><div>历史记录仅来自通过数据核验的 NTWR-A 模拟账户；日期为产生信号的收盘交易日，价格情景是假设下一开盘成交，不是预测或盘中挂单条件。历史补报信号已经失效，不能追单。本站不会连接券商或执行任何交易。</div></div>
+      <div><b>关于本页面</b><div>真实仓位来自使用者手工申报，当前确认截至 2026-11-16 为 0%，所有买入信号均未成交。未来若没有新的成交确认，仅沿用未核实的手工账本，不代表证券账户实时持仓。首仓数量按假设本金 10 万元举例，实际资金金额未知。历史策略账户另行保留，不连接券商、不下单；补报不能追单。</div></div>
       <div>© NTWR Signal Wall · 159680.SZ<br>数据以 GitHub Actions / Issue #4 的正式运行记录为准。</div>
     </footer>
   </div>
@@ -124,31 +124,49 @@
     const dayName = date => ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][new Date(date+"T12:00:00+08:00").getUTCDay()];
     const label = {BUY:"买入信号",SELL:"卖出信号",HOLD:"继续观望"};
     let entries = [], chosen = "ALL";
+    const visibleSignal = e => e.position_view?.entry_signal || e.signal;
     function card(e) {
-      const r=e.reference_open||{}, target=percent(e.target_weight), actual=percent(e.actual_weight);
-      const cap=Math.min(100,Math.max(0,Number(e.target_weight)*100));
-      const act=Math.min(100,Math.max(0,Number(e.actual_weight)*100));
-      const rows=(e.opening_scenarios||[]).map(x=>'<tr><td>'+'¥'+Number(x.candidate_open_price).toFixed(3)+'</td><td>'+h(x.execution)+'</td><td>'+Number(x.quantity).toLocaleString("zh-CN")+' 份</td></tr>').join("");
+      const view=e.position_view && e.position_view.account_view==="MANUAL_NO_REPORTED_FILLS" ? e.position_view : null;
+      const r=(view?.reference_open||e.reference_open||{});
+      const target=percent(view?view.entry_weight:e.target_weight);
+      const actual=percent(view?view.recorded_weight:e.actual_weight);
+      const cap=Math.min(100,Math.max(0,Number(view?view.entry_weight:e.target_weight)*100));
+      const act=Math.min(100,Math.max(0,Number(view?view.recorded_weight:e.actual_weight)*100));
+      const rows=((view?.opening_scenarios)||e.opening_scenarios||[]).map(x=>'<tr><td>'+'¥'+Number(x.candidate_open_price).toFixed(3)+'</td><td>'+h(x.execution)+'</td><td>'+Number(x.quantity).toLocaleString("zh-CN")+' 份</td></tr>').join("");
       const historical=e.timeliness==="HISTORICAL_ONLY";
+      const confirmed=view?.confirmation==="CONFIRMED_FLAT";
+      const visualSignal=visibleSignal(e);
+      const signalCaption=view?'首次建仓参考 2% · 并未成交':label[e.signal];
+      const viewBadge=view?(confirmed?'已确认 0%':'未核实 0%'):(historical?'历史回算':'已核验');
+      const note=view?'手工记录持仓':'模拟收盘仓位';
       const source = /^https:\/\/github\.com\/zhangzihaoDT\/grid-trading\/actions\/runs\/\d+$/.test(e.run_url||"") ? e.run_url : "https://github.com/zhangzihaoDT/grid-trading/actions";
-      return '<article class="card '+h(e.signal.toLowerCase())+'">'
-        +'<div class="card-top"><div><div class="card-date">'+h(e.market_date)+'</div><div class="day-name">'+dayName(e.market_date)+'</div></div><span class="tag">'+(historical?'历史回算':'已核验')+'</span></div>'
-        +'<div class="signal">'+h(e.signal)+'</div><div class="signal-zh">'+label[e.signal]+'</div>'
-        +'<div class="card-main"><div><div class="k">实际仓位</div><div class="v">'+actual+'</div><div class="mini-note">模拟收盘仓位</div></div><div><div class="k">目标仓位</div><div class="v">'+target+'</div><div class="mini-note">SMA250 策略计算</div></div></div>'
+      return '<article class="card '+h(visualSignal.toLowerCase())+'">'
+        +'<div class="card-top"><div><div class="card-date">'+h(e.market_date)+'</div><div class="day-name">'+dayName(e.market_date)+'</div></div><span class="tag">'+viewBadge+'</span></div>'
+        +'<div class="signal">'+h(visualSignal)+'</div><div class="signal-zh">'+signalCaption+'</div>'
+        +'<div class="card-main"><div><div class="k">'+(view?'手工持仓':'模拟实际仓位')+'</div><div class="v">'+actual+'</div><div class="mini-note">'+note+'</div></div><div><div class="k">'+(view?'首次开仓参考':'策略目标仓位')+'</div><div class="v">'+target+'</div><div class="mini-note">'+(view?'未建仓时使用，不是 SMA250 满仓目标':'SMA250 策略计算')+'</div></div></div>'
         +'<div class="weight-line" title="深色为实际仓位，竖线为目标仓位" style="--actual:'+act+'%;--target:'+cap+'%"><div class="actual"></div><div class="target"></div></div>'
-        +'<div class="card-foot"><span>目标缺口</span><strong>'+signed(e.weight_gap)+'</strong></div>'
+        +'<div class="card-foot"><span>目标缺口</span><strong>'+signed(view?view.entry_gap:e.weight_gap)+'</strong></div>'
         +'<div class="card-foot"><span>当日收盘价</span><strong>¥'+Number(e.close).toFixed(3)+'</strong></div>'
-        +'<div class="card-foot"><span>假设下个开盘 · '+h(r.execution||"—")+'</span><strong>'+Number(r.quantity||0).toLocaleString("zh-CN")+' 份</strong></div>'
+        +'<div class="card-foot"><span>'+(view?'假设本金 ¥100,000 · 首仓示例':'假设下个开盘 · '+h(r.execution||"—"))+'</span><strong>'+Number(r.quantity||0).toLocaleString("zh-CN")+' 份</strong></div>'
         +'<details class="details"><summary>查看完整信号测算</summary><div class="detail-body">'
         +'<div class="detail-row"><span>次一工作日（估计）</span><strong>'+h(e.next_open_date_estimate)+'</strong></div>'
         +'<div class="detail-row"><span>SMA250</span><strong>¥'+Number(e.sma250).toFixed(4)+'</strong></div>'
-        +'<div class="detail-row"><span>模拟账户净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
-        +'<div class="detail-row"><span>模拟可用现金</span><strong>'+cny(e.cash_cny)+'</strong></div>'
-        +'<div class="detail-row"><span>模拟持有份额</span><strong>'+Number(e.shares).toLocaleString("zh-CN")+'</strong></div>'
+        +(view?'<div class="detail-row"><span>实际成交记录</span><strong>0 份 · 未执行</strong></div>'
+           +'<div class="detail-row"><span>持仓确认日期</span><strong>'+h(view.confirmed_flat_through)+'</strong></div>'
+           +'<div style="margin:12px 0;color:#68796d">下面是以 ¥100,000 假设本金计算的首次建仓示例，非你的账户资金或真实订单。</div>'
+           :'<div class="detail-row"><span>模拟账户净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
+            +'<div class="detail-row"><span>模拟可用现金</span><strong>'+cny(e.cash_cny)+'</strong></div>'
+            +'<div class="detail-row"><span>模拟持有份额</span><strong>'+Number(e.shares).toLocaleString("zh-CN")+'</strong></div>')
         +'<div class="detail-row"><span>基准情景成交金额</span><strong>'+cny(r.notional_cny||0)+'</strong></div>'
         +'<div class="detail-row"><span>基准情景成交额/NAV</span><strong>'+percent(r.notional_pct_nav||0)+'</strong></div>'
         +'<table class="scenario"><thead><tr><th>假设开盘价</th><th>动作</th><th style="text-align:right">模拟数量</th></tr></thead><tbody>'+rows+'</tbody></table>'
-        +'<div style="margin-top:13px;color:#7a8b81">'+(historical?'这是一条历史补算，不表示当前可执行买卖。':'本次仅描述当时收盘形成的模拟计划；开盘执行需以当日行情重新计算。')+'</div>'
+        +(view?'<div style="margin-top:16px;padding:12px;border-radius:9px;background:#ffffff80"><strong>原策略研究账户（独立保留）</strong>'
+             +'<div class="detail-row"><span>原始收盘策略信号</span><strong>'+h(e.signal)+'</strong></div>'
+             +'<div class="detail-row"><span>模拟仓位</span><strong>'+percent(e.actual_weight)+'</strong></div>'
+             +'<div class="detail-row"><span>SMA250 目标仓位</span><strong>'+percent(e.target_weight)+'</strong></div>'
+             +'<div class="detail-row"><span>模拟净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
+             +'</div>':'')
+        +'<div style="margin-top:13px;color:#7a8b81">'+(view?'首仓 BUY 是未建仓时的 2% 参考，并非重新认证的择时信号；原始策略结果见上。'+(confirmed?'三日未成交已手工确认。':'此日期持仓尚未重新确认。'):'')+(historical?' 历史补报不表示当前可执行买卖。':' 当前开盘仍需按真实价格、真实可用资金核算。')+'</div>'
         +'<a class="detail-source" href="'+h(source)+'" target="_blank" rel="noreferrer">查看运行证据 ↗</a>'
         +'</div></details></article>';
     }
@@ -173,7 +191,7 @@
       requestAnimationFrame(()=>{layoutScheduled=false;layoutMasonry();});
     }
     function render(){
-      const showing=chosen==="ALL"?entries:entries.filter(x=>x.signal===chosen);
+      const showing=chosen==="ALL"?entries:entries.filter(x=>visibleSignal(x)===chosen);
       wall.classList.remove("masonry");
       wall.innerHTML=showing.length?showing.map(card).join(""):'<div class="empty">该筛选下尚无已核验交易日信号。</div>';
       scheduleMasonry();
@@ -185,9 +203,9 @@
       if(feed.schema_version!==1 || feed.symbol!=="159680.SZ" || !Array.isArray(feed.entries))throw new Error("信号档案版本不匹配");
       entries=feed.entries.slice().sort((a,b)=>b.market_date.localeCompare(a.market_date));
       text("day-count",entries.length);
-      text("buy-count",entries.filter(e=>e.signal==="BUY").length);
-      text("sell-count",entries.filter(e=>e.signal==="SELL").length);
-      text("hold-count",entries.filter(e=>e.signal==="HOLD").length);
+      text("buy-count",entries.filter(e=>visibleSignal(e)==="BUY").length);
+      text("sell-count",entries.filter(e=>visibleSignal(e)==="SELL").length);
+      text("hold-count",entries.filter(e=>visibleSignal(e)==="HOLD").length);
       text("latest-date",entries.length?"最近信号日 "+entries[0].market_date+" · 共 "+entries.length+" 个交易日":"暂无已核验记录");
       render();
     }).catch(err=>{wall.innerHTML='<div class="empty">信号档案尚未就绪：'+h(err.message)+'。请查看 GitHub Actions 发布状态。</div>';text("latest-date","数据载入未成功");});
