@@ -34,8 +34,12 @@
     .filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
     .filter{border:1px solid #e2e5df;background:#fff;border-radius:999px;padding:10px 15px;cursor:pointer;color:#6b7671;font-size:12px;font-weight:690;transition:background .15s,border .15s}
     .filter[aria-pressed="true"]{background:#1c3531;border-color:#1c3531;color:#fff}.filter:hover:not([aria-pressed="true"]){border-color:#89a49a}
-    .wall{columns:4 250px;column-gap:16px;min-height:150px}
-    .card{display:inline-block;width:100%;break-inside:avoid;page-break-inside:avoid;margin:0 0 16px;padding:22px;border:1px solid #e9eae5;background:white;border-radius:var(--radius);box-shadow:0 3px 15px #21342b04;transition:transform .22s,box-shadow .22s;overflow:hidden}
+    /* Row-first order: the first three daily cards occupy the first three columns. */
+    .wall{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start;min-height:150px}
+    /* Progressive enhancement: the script sizes row spans for a compact masonry wall. */
+    .wall.masonry{grid-auto-rows:8px}
+    .wall>.empty{grid-column:1/-1}
+    .card{display:block;width:100%;margin:0;min-width:0;align-self:start;padding:22px;border:1px solid #e9eae5;background:white;border-radius:var(--radius);box-shadow:0 3px 15px #21342b04;transition:transform .22s,box-shadow .22s;overflow:hidden}
     .card:hover{transform:translateY(-3px);box-shadow:0 16px 30px #1f302214}
     .card.buy{background:#e9f3e9;border-color:#dcebdc}.card.sell{background:#f9eae4;border-color:#f0dcd3}.card.hold{background:#eeebf7;border-color:#e4e0f0}
     .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
@@ -62,8 +66,9 @@
     .empty{padding:70px 20px;text-align:center;background:white;border:1px dashed #bbc8c1;border-radius:20px;color:#79877f;font-size:14px}
     .footer{margin-top:58px;border-top:1px solid #dbe0d9;padding:28px 0 10px;display:flex;gap:25px;justify-content:space-between;color:#748079;font-size:11px;line-height:1.8}
     .footer b{color:#3c4d42}.footer>div{max-width:700px}
-    @media(max-width:900px){.hero{grid-template-columns:1fr;padding:30px;min-height:320px}.hero-metrics{flex-direction:row;align-items:end;text-align:left}.run-number{font-size:90px}.stat-strip{grid-template-columns:repeat(2,1fr)}.section-head{align-items:flex-start;flex-direction:column}}
-    @media(max-width:540px){.shell{padding:0 16px 34px}.nav{height:72px}.nav-right{gap:8px}.nav-link{font-size:11px}.hero{padding:26px 24px;border-radius:22px}.hero-metrics{gap:8px;align-items:end}.run-number{font-size:74px}.hero h1{font-size:39px}.stat-strip{gap:8px;margin:12px 0 28px}.stat{padding:16px;min-height:80px}.stat-value{font-size:25px}.wall{columns:1}.section-head h2{font-size:25px}.footer{flex-direction:column;gap:7px}}
+    @media(max-width:1180px){.wall{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;padding:30px;min-height:320px}.hero-metrics{flex-direction:row;align-items:end;text-align:left}.run-number{font-size:90px}.stat-strip{grid-template-columns:repeat(2,1fr)}.section-head{align-items:flex-start;flex-direction:column}.wall{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:540px){.shell{padding:0 16px 34px}.nav{height:72px}.nav-right{gap:8px}.nav-link{font-size:11px}.hero{padding:26px 24px;border-radius:22px}.hero-metrics{gap:8px;align-items:end}.run-number{font-size:74px}.hero h1{font-size:39px}.stat-strip{gap:8px;margin:12px 0 28px}.stat{padding:16px;min-height:80px}.stat-value{font-size:25px}.wall{grid-template-columns:1fr}.section-head h2{font-size:25px}.footer{flex-direction:column;gap:7px}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
   </style>
 </head>
@@ -147,10 +152,34 @@
         +'<a class="detail-source" href="'+h(source)+'" target="_blank" rel="noreferrer">查看运行证据 ↗</a>'
         +'</div></details></article>';
     }
+    // CSS multi-column balances item heights and can place the third daily card
+    // below earlier cards. A row-first grid preserves chronological reading order.
+    // Measure each card's natural height before activating masonry row spans.
+    let layoutScheduled=false;
+    function layoutMasonry(){
+      const cards=Array.from(wall.querySelectorAll(".card"));
+      wall.classList.remove("masonry");
+      cards.forEach(el=>{el.style.gridRowEnd="auto";});
+      if(!cards.length)return;
+      const heights=cards.map(el=>el.getBoundingClientRect().height);
+      wall.classList.add("masonry");
+      cards.forEach((el,i)=>{
+        el.style.gridRowEnd="span "+Math.max(1,Math.ceil((heights[i]+16)/24));
+      });
+    }
+    function scheduleMasonry(){
+      if(layoutScheduled)return;
+      layoutScheduled=true;
+      requestAnimationFrame(()=>{layoutScheduled=false;layoutMasonry();});
+    }
     function render(){
       const showing=chosen==="ALL"?entries:entries.filter(x=>x.signal===chosen);
+      wall.classList.remove("masonry");
       wall.innerHTML=showing.length?showing.map(card).join(""):'<div class="empty">该筛选下尚无已核验交易日信号。</div>';
+      scheduleMasonry();
     }
+    wall.addEventListener("toggle",e=>{if(e.target.tagName==="DETAILS")scheduleMasonry();},true);
+    window.addEventListener("resize",scheduleMasonry);
     buttons.forEach(b=>b.addEventListener("click",()=>{chosen=b.dataset.filter;buttons.forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
     fetch("./signals.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(feed=>{
       if(feed.schema_version!==1 || feed.symbol!=="159680.SZ" || !Array.isArray(feed.entries))throw new Error("信号档案版本不匹配");
