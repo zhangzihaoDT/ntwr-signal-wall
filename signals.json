@@ -1,6 +1,144 @@
 {
   "entries": [
     {
+      "actual_weight": "0.8076426702889746925767285372",
+      "cash_cny": "22953.4285800",
+      "close": "1.346",
+      "market_date": "2026-11-17",
+      "nav_cny": "119327.0285800",
+      "next_open_date_estimate": "2026-11-18",
+      "opening_scenarios": [
+        {
+          "after_weight": "0.8044749978968613343098448591",
+          "before_weight": "0.8044749978968613343098448591",
+          "candidate_open_price": "1.319",
+          "change_pp": "0",
+          "execution": "HOLD",
+          "notional_cny": "0",
+          "notional_pct_nav": "0",
+          "quantity": "0"
+        },
+        {
+          "after_weight": "0.8076426702889746925767285372",
+          "before_weight": "0.8076426702889746925767285372",
+          "candidate_open_price": "1.346",
+          "change_pp": "0",
+          "execution": "HOLD",
+          "notional_cny": "0",
+          "notional_pct_nav": "0",
+          "quantity": "0"
+        },
+        {
+          "after_weight": "0.8107093409867956229445530870",
+          "before_weight": "0.8107093409867956229445530870",
+          "candidate_open_price": "1.373",
+          "change_pp": "0",
+          "execution": "HOLD",
+          "notional_cny": "0",
+          "notional_pct_nav": "0",
+          "quantity": "0"
+        }
+      ],
+      "position_view": {
+        "account_view": "MANUAL_NO_REPORTED_FILLS",
+        "confirmation": "CARRIED_FORWARD_UNVERIFIED",
+        "confirmed_flat_through": "2026-11-16",
+        "entry_gap": "0.02",
+        "entry_rule": "SMA250_TIMING_GATE_THEN_FIXED_2PCT_FIRST_ALLOCATION",
+        "entry_signal": "BUY",
+        "entry_weight": "0.02",
+        "example_capital_cny": "100000",
+        "executed": false,
+        "initial_allocation_target": "0.02",
+        "opening_scenarios": [
+          {
+            "after_weight": "0.01978511743456453285778477738",
+            "before_weight": "0",
+            "candidate_open_price": "1.319",
+            "change_pp": "1.978511743456453285778477738",
+            "execution": "BUY",
+            "fee_cny": "0.5935500",
+            "notional_cny": "1978.500",
+            "notional_pct_nav": "0.019785",
+            "quantity": "1500"
+          },
+          {
+            "after_weight": "0.01884410652950303258654381825",
+            "before_weight": "0",
+            "candidate_open_price": "1.346",
+            "change_pp": "1.884410652950303258654381825",
+            "execution": "BUY",
+            "fee_cny": "0.5653200",
+            "notional_cny": "1884.400",
+            "notional_pct_nav": "0.018844",
+            "quantity": "1400"
+          },
+          {
+            "after_weight": "0.01922211084622440583765870344",
+            "before_weight": "0",
+            "candidate_open_price": "1.373",
+            "change_pp": "1.922211084622440583765870344",
+            "execution": "BUY",
+            "fee_cny": "0.5766600",
+            "notional_cny": "1922.200",
+            "notional_pct_nav": "0.019222",
+            "quantity": "1400"
+          }
+        ],
+        "provenance": "user-confirmed-in-chat-2026-11-17",
+        "recorded_shares": "0",
+        "recorded_weight": "0",
+        "reference_open": {
+          "after_weight": "0.01884410652950303258654381825",
+          "before_weight": "0",
+          "candidate_open_price": "1.346",
+          "change_pp": "1.884410652950303258654381825",
+          "execution": "BUY",
+          "fee_cny": "0.5653200",
+          "notional_cny": "1884.400",
+          "notional_pct_nav": "0.018844",
+          "quantity": "1400"
+        },
+        "schema_version": 1,
+        "timing": {
+          "condition": "verified_close_at_or_below_sma250",
+          "deviation_pct": "-17.43465928608583851053597542",
+          "evidence_level": "PRE_REGISTERED_RESEARCH_CANDIDATE_NOT_PROVEN",
+          "ma250": "1.630224",
+          "observation": "T_close -> T_plus_1_open",
+          "price": "1.346",
+          "price_source": "verified_raw_close_adjustment_gate_pass",
+          "rule": "SMA250_CLOSE_LEQ_V11.17",
+          "signal": "BUY"
+        },
+        "warning": "Recorded flat holdings are manual, not broker-verified; the market-based SMA250 entry timing signal is a pre-registered research rule without proven economic edge; 2% is conditional first-allocation size, not a real order."
+      },
+      "price_condition": null,
+      "reference_open": {
+        "after_weight": "0.8076426702889746925767285372",
+        "before_weight": "0.8076426702889746925767285372",
+        "candidate_open_price": "1.346",
+        "change_pp": "0",
+        "execution": "HOLD",
+        "notional_cny": "0",
+        "notional_pct_nav": "0",
+        "quantity": "0"
+      },
+      "run_url": "https://github.com/zhangzihaoDT/grid-trading/actions/runs/44156532005",
+      "shares": "71600",
+      "signal": "HOLD",
+      "sma250": "1.630224",
+      "source_sha256": {
+        "eastmoney_qfq": "0c09ba63d246c9f3913b351980bbff119c14a7eb9dddce1e57ce0507015b69ec",
+        "eastmoney_raw": "37f9567e8d779e788b7df98206eb092e436fc09954cab98d06b144fe27ad771b",
+        "sina": "c6a8ccd06117c99d73064be039a7e7d27d3789afe5e9dcc5f4b0dc8a2160d9b9"
+      },
+      "strategy_version": "NTWR-A V1.0 SMA250 + fixed 2% initial allocation",
+      "target_weight": "0.8121109977",
+      "timeliness": "PENDING_NEXT_OPEN",
+      "weight_gap": "0.0044683274110253074232714628"
+    },
+    {
       "actual_weight": "0.7647088050240181706407282195",
       "cash_cny": "28204.4034000",
       "close": "1.354",
