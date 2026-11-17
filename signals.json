@@ -44,11 +44,12 @@
         "confirmation": "CONFIRMED_FLAT",
         "confirmed_flat_through": "2026-11-16",
         "entry_gap": "0.02",
-        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_rule": "SMA250_TIMING_GATE_THEN_FIXED_2PCT_FIRST_ALLOCATION",
         "entry_signal": "BUY",
         "entry_weight": "0.02",
         "example_capital_cny": "100000",
         "executed": false,
+        "initial_allocation_target": "0.02",
         "opening_scenarios": [
           {
             "after_weight": "0.01990511886341729289636453064",
@@ -99,7 +100,18 @@
           "quantity": "1400"
         },
         "schema_version": 1,
-        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+        "timing": {
+          "condition": "verified_close_at_or_below_sma250",
+          "deviation_pct": "-16.97570834314418020563535044",
+          "evidence_level": "PRE_REGISTERED_RESEARCH_CANDIDATE_NOT_PROVEN",
+          "ma250": "1.630848",
+          "observation": "T_close -> T_plus_1_open",
+          "price": "1.354",
+          "price_source": "verified_raw_close_adjustment_gate_pass",
+          "rule": "SMA250_CLOSE_LEQ_V11.17",
+          "signal": "BUY"
+        },
+        "warning": "Recorded flat holdings are manual, not broker-verified; the market-based SMA250 entry timing signal is a pre-registered research rule without proven economic edge; 2% is conditional first-allocation size, not a real order."
       },
       "price_condition": {
         "basis": "frozen_target_next_open_min_notional_and_lot_checked",
@@ -175,11 +187,12 @@
         "confirmation": "CONFIRMED_FLAT",
         "confirmed_flat_through": "2026-11-16",
         "entry_gap": "0.02",
-        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_rule": "SMA250_TIMING_GATE_THEN_FIXED_2PCT_FIRST_ALLOCATION",
         "entry_signal": "BUY",
         "entry_weight": "0.02",
         "example_capital_cny": "100000",
         "executed": false,
+        "initial_allocation_target": "0.02",
         "opening_scenarios": [
           {
             "after_weight": "0.01932011197936903242291192320",
@@ -230,7 +243,18 @@
           "quantity": "1400"
         },
         "schema_version": 1,
-        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+        "timing": {
+          "condition": "verified_close_at_or_below_sma250",
+          "deviation_pct": "-13.69397157295188684102772826",
+          "evidence_level": "PRE_REGISTERED_RESEARCH_CANDIDATE_NOT_PROVEN",
+          "ma250": "1.631404",
+          "observation": "T_close -> T_plus_1_open",
+          "price": "1.408",
+          "price_source": "verified_raw_close_adjustment_gate_pass",
+          "rule": "SMA250_CLOSE_LEQ_V11.17",
+          "signal": "BUY"
+        },
+        "warning": "Recorded flat holdings are manual, not broker-verified; the market-based SMA250 entry timing signal is a pre-registered research rule without proven economic edge; 2% is conditional first-allocation size, not a real order."
       },
       "price_condition": {
         "basis": "frozen_target_next_open_min_notional_and_lot_checked",
@@ -306,11 +330,12 @@
         "confirmation": "CONFIRMED_FLAT",
         "confirmed_flat_through": "2026-11-16",
         "entry_gap": "0.02",
-        "entry_rule": "FIRST_ALLOCATION_2PCT_AT_NEXT_OPEN_IF_NOT_YET_ENTERED",
+        "entry_rule": "SMA250_TIMING_GATE_THEN_FIXED_2PCT_FIRST_ALLOCATION",
         "entry_signal": "BUY",
         "entry_weight": "0.02",
         "example_capital_cny": "100000",
         "executed": false,
+        "initial_allocation_target": "0.02",
         "opening_scenarios": [
           {
             "after_weight": "0.01857710353205569449959101567",
@@ -361,7 +386,18 @@
           "quantity": "1300"
         },
         "schema_version": 1,
-        "warning": "Recorded flat holdings are manual, not broker-verified; 2% is illustrative first allocation, not a validated new entry-timing signal or a real order."
+        "timing": {
+          "condition": "verified_close_at_or_below_sma250",
+          "deviation_pct": "-10.65256717603282690865236127",
+          "evidence_level": "PRE_REGISTERED_RESEARCH_CANDIDATE_NOT_PROVEN",
+          "ma250": "1.631832",
+          "observation": "T_close -> T_plus_1_open",
+          "price": "1.458",
+          "price_source": "verified_raw_close_adjustment_gate_pass",
+          "rule": "SMA250_CLOSE_LEQ_V11.17",
+          "signal": "BUY"
+        },
+        "warning": "Recorded flat holdings are manual, not broker-verified; the market-based SMA250 entry timing signal is a pre-registered research rule without proven economic edge; 2% is conditional first-allocation size, not a real order."
       },
       "price_condition": null,
       "reference_open": {
