@@ -1,0 +1,67 @@
+name: Publish NTWR Signal Wall
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'signals.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ntwr-signal-wall-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate public signal feed
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("signals.json").read_text(encoding="utf-8"))
+          assert data["schema_version"]==1 and data["symbol"]=="159680.SZ"
+          entries=data["entries"]
+          seen=set()
+          for entry in entries:
+              d=entry["market_date"]
+              assert d not in seen, f"duplicate {d}"
+              seen.add(d)
+              assert d>"2026-11-11"
+              assert entry["signal"] in ("BUY","SELL","HOLD")
+              assert entry["strategy_version"].endswith("fixed 2% initial allocation")
+              assert entry["next_open_date_estimate"]>d
+              assert entry["timeliness"] in ("HISTORICAL_ONLY","PENDING_NEXT_OPEN")
+              assert "source_sha256" in entry
+              assert "run_url" in entry
+          assert entries==sorted(entries,key=lambda e:e["market_date"],reverse=True)
+          print(f"Validated {len(entries)} unique NTWR-A signal cards.")
+          PY
+      - name: Assemble public-only website
+        run: |
+          mkdir -p public
+          cp index.html signals.json public/
+          touch public/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: publish
