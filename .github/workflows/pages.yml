@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'signals.json'
+      - 'simulation.json'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -71,10 +72,32 @@ jobs:
           assert entries==sorted(entries,key=lambda e:e["market_date"],reverse=True)
           print(f"Validated {len(entries)} privacy-safe actual-ledger signal cards.")
           PY
+      - name: Validate historical simulated four-card comparison (separate from real ledger)
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('simulation.json')
+          assert p.exists(), 'verified historical comparison was not published'
+          s=json.loads(p.read_text(encoding='utf-8'))
+          assert s['schema_version']==1 and s['symbol']=='159680.SZ'
+          assert s['account_mode']=='COUNTERFACTUAL_PAPER_ONLY_NOV12_INITIAL_BUY'
+          assert s['simulation_start']=='2026-11-12' and s['simulation_end']=='2026-11-17'
+          assert s['entry_budget_target_pct']=='2.0'
+          assert s['fee_model']=='SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM'
+          dates=[e['market_date'] for e in s['entries']]
+          assert dates==['2026-11-17','2026-11-16','2026-11-13','2026-11-12']
+          assert all(e['timeliness']=='HISTORICAL_ONLY' for e in s['entries'])
+          text=json.dumps(s,ensure_ascii=False).lower()
+          for word in ('reported_fills','execution_price_cny','quantity_shares',
+                       'commission_cny','cost_basis','grid_anchor','private/positions/'):
+              assert word not in text
+          print('PASS: four privacy-safe simulated comparison cards')
+          PY
       - name: Assemble public-only website
         run: |
           mkdir -p public
-          cp index.html signals.json public/
+          cp index.html signals.json simulation.json public/
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
