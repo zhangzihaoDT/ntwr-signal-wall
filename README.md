@@ -1,19 +1,29 @@
 # NTWR Signal Wall · 159680.SZ
 
-Public, **paper-only** daily-signal dashboard for the 159680.SZ NTWR-A strategy (2% initial allocation).
+**公开展示：NTWR-A V11.18-HS · 以最近一次用户申报持仓为基础的网格信号。**
 
-- [Dashboard](https://zhangzihaodt.github.io/ntwr-signal-wall/) (available after GitHub Pages is enabled)
-- One card per completed, validated market session; BUY / SELL / HOLD are historical simulated signals, not live orders.
-- Source calculation and data gates remain in the private `grid-trading` repository. This site contains only published card data.
+[打开信号墙](https://zhangzihaodt.github.io/ntwr-signal-wall/)
 
-The dashboard is static: `index.html` and `signals.json`, published via GitHub Pages from a public repository. The private CI will update the sanitized feed with a scoped deploy credential.
+## 现在展示什么？
 
-**Important:** simulated quantities are not personal investment advice. Past signals cannot be treated as current execution instructions.
+经完成的交易日市场数据双源核验后，每张卡片提供：
 
-## One-time GitHub setup
+- BUY / SELL / HOLD 信号及其交易日和时效。
+- 根据最近一次**用户申报**持仓重建的股票仓位百分比（保留0.1个百分点）、下一开盘**参考**仓位及变化pp。
+- 公开的当日收盘价和经过隐私取整的**下一买入、卖出观察价格带**（每带1分钱宽）。价格带并非可直接下单的精确限价，具体成交需要另外验证。
 
-1. **Publish this public site:** open [this repository's Pages settings](https://github.com/zhangzihaoDT/ntwr-signal-wall/settings/pages), choose **Build and deployment → Source: GitHub Actions**, then use [Publish NTWR Signal Wall](https://github.com/zhangzihaoDT/ntwr-signal-wall/actions/workflows/pages.yml) → **Run workflow**. The dashboard address is https://zhangzihaodt.github.io/ntwr-signal-wall/.
-2. **Enable unattended daily synchronization:** create a GitHub **fine-grained personal access token** restricted to repository `zhangzihaoDT/ntwr-signal-wall` with **Contents: Read and write** (the required Metadata read-only permission is automatic). Save it in **the PRIVATE repository** `zhangzihaoDT/grid-trading` at **Settings → Secrets and variables → Actions → New repository secret**, with name `SIGNAL_WALL_PUBLISH_TOKEN`. Never store the token in code or on this public repository.
-3. Run [the private Signal Wall workflow](https://github.com/zhangzihaoDT/grid-trading/actions/workflows/ntwr-a-signal-wall.yml) once with the `dates` input left empty; it will sync the currently validated feed to this public repository. After that, the private daily-signal workflow automatically invokes the aggregation whenever a genuine production daily run succeeds.
+**不展示**用户的原始买入成交价、准确份额、实付手续费、持仓成本、现金余额或私人网格精确锚点；不包含私有交易流水或券商凭证。展示的是依据用户最后一次申报持仓计算的**条件信号**，不是券商实时资产同步，也不表示用户已按过去的BUY/SELL自动成交。
 
-The public repository intentionally contains **no strategy source code, trading account data, private market files, or credentials**. Only display-ready, simulated BUY/SELL/HOLD cards are published. Dates are unique, historical records are not silently overwritten, and missing or blocked daily data never creates a signal card.
+真实买卖信息只在私有 `grid-trading` 仓库的受控账本中计算，通过严格的 schema2 白名单输出页面字段。原来按V1.0和独立纸面模拟账户生成的历史卡片不再在这个公开看板中显示，旧数据仍可在私有仓库审计。
+
+## 隐私边界和风险
+
+公开仓位百分比、观察价格区间和行情可能使了解投资金额的人**近似推算出实际持有规模**；取整降低了精度，但不是完全匿名。用户已授权公开这些衍生指标。若需要绝对隐藏持仓，应改为仅私有看板。
+
+该信号未连接券商、不会自动下单。若用户没有补报成交，信号只针对最新一次申报仓位，可能已经过时。最低佣金与滑点可能令小额交易名义止盈后仍亏损；过去的纸面回测结果不能当作真实成本后的收益承诺。
+
+## 技术与部署
+
+本仓库只托管公开展示所需的 `index.html` 和 `signals.json`。源计算、原始价格核验、私人账本以及策略源码保留在私有 `grid-trading` 仓库，通过限定权限的 GitHub Actions 同步**白名单投影**，没有交易凭证或私有数据文件进入此仓库。
+
+站点由仓库 Actions 的 [Pages 工作流](https://github.com/zhangzihaoDT/ntwr-signal-wall/actions/workflows/pages.yml) 部署。如果尚未启用，请在仓库 Settings → Pages → Build and deployment 中选择 GitHub Actions。生产信号形成后，私有仓库进行核验和脱敏，再触发公开仓库发布；异常行情不会生成新卡片。
