@@ -29,22 +29,47 @@ jobs:
           import json
           from pathlib import Path
           data=json.loads(Path("signals.json").read_text(encoding="utf-8"))
-          assert data["schema_version"]==1 and data["symbol"]=="159680.SZ"
+          assert data["schema_version"]==2 and data["symbol"]=="159680.SZ"
+          assert data["account_mode"]=="USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED"
+          assert set(data)=={"schema_version","symbol","strategy","account_mode","privacy","entries"}
           entries=data["entries"]
+          allowed={"market_date","policy","strategy_version","account_mode",
+                   "signal","timeliness","close_market","stock_weight_pct",
+                   "reference_target_weight_pct","suggested_change_pp",
+                   "next_buy_zone","next_sell_zone","next_weekday",
+                   "strategy_rung","ledger_freshness","reporting_basis",
+                   "capital_basis","minimum_fee_warning","reason",
+                   "run_url","source_verified"}
+          forbidden=("execution_price_cny","quantity_shares","commission_cny",
+                     "cost_basis","average_cost","cash_cny","notional_cny",
+                     "grid_anchor","private/positions/","reported_fills")
+          text=json.dumps(data,ensure_ascii=False).lower()
+          assert all(s not in text for s in forbidden), "sensitive real fill data in public feed"
           seen=set()
-          for entry in entries:
-              d=entry["market_date"]
-              assert d not in seen, f"duplicate {d}"
+          for e in entries:
+              assert set(e)==allowed, "unapproved public schema fields"
+              d=e["market_date"]
+              assert d not in seen and d>="2026-11-18"
               seen.add(d)
-              assert d>"2026-11-11"
-              assert entry["signal"] in ("BUY","SELL","HOLD")
-              assert entry["strategy_version"].endswith("fixed 2% initial allocation")
-              assert entry["next_open_date_estimate"]>d
-              assert entry["timeliness"] in ("HISTORICAL_ONLY","PENDING_NEXT_OPEN")
-              assert "source_sha256" in entry
-              assert "run_url" in entry
+              assert e["policy"]=="ntwr_a_v11_18"
+              assert e["strategy_version"]=="NTWR-A V11.18-HS / user-reported position"
+              assert e["account_mode"]==data["account_mode"]
+              assert e["signal"] in ("BUY","SELL","HOLD")
+              assert e["timeliness"] in ("HISTORICAL_ONLY","PENDING_NEXT_OPEN")
+              assert e["next_weekday"]>d
+              assert e["source_verified"] is True
+              from decimal import Decimal
+              for key in ("stock_weight_pct","reference_target_weight_pct","suggested_change_pp"):
+                  assert Decimal(e[key]).as_tuple().exponent >= -1
+              for field in ("next_buy_zone","next_sell_zone"):
+                  z=e[field]
+                  if z is None:
+                      continue
+                  assert set(z)=={"low","high","direction","precision"}
+                  assert Decimal(z["high"])-Decimal(z["low"])==Decimal("0.01")
+                  assert z["precision"]=="PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
           assert entries==sorted(entries,key=lambda e:e["market_date"],reverse=True)
-          print(f"Validated {len(entries)} unique NTWR-A signal cards.")
+          print(f"Validated {len(entries)} privacy-safe actual-ledger signal cards.")
           PY
       - name: Assemble public-only website
         run: |
