@@ -76,7 +76,13 @@
     </div>
   </section>
   <main id="cards" class="grid" aria-live="polite"><div class="empty">正在读取已核验的持仓信号…</div></main>
-  <footer class="footer">本页面显示依据用户最后一次申报仓位计算的信号；申报后若有未录入的交易，公开仓位与信号会滞后。<strong>仓位比例是按声明的资金预算估算，不代表证券账户实时仓位。</strong> 价格仅为取整后的观察带，不是精确可下单限价；实际交易须重新核对股数、可用现金、最低佣金和交易所规则。历史纸面账户已退出本看板，私有仓库保留旧记录。本页不连接券商、不下单，不承诺投资收益。</footer>
+  <section class="intro" id="simulated-history" aria-label="独立历史模拟对照">
+    <h2>独立模拟对照 · 四个交易日</h2>
+    <p><strong>11 月 12 日开盘假设首次建仓</strong>，按 ¥10,000 初始资金、含费不超过2%的首仓预算、ETF100份整手与 V11.18-HS 金字塔规则，逐日推演 11/12、11/13、11/16、11/17。模拟采用3bp回测手续费，<strong>没有计入实际最低5元佣金</strong>，不能代替真实账本信号或用作11/18已过期开盘的挂单。</p>
+    <div class="state"><span class="chip">历史假设 · 非实际成交</span><span class="chip">单独的模拟账户</span><span class="chip" id="simulation-count">待核验</span></div>
+  </section>
+  <section id="simulation-cards" class="grid" aria-live="polite"><div class="empty">模拟历史数据待核验发布；不会借用真实成交或旧模拟卡片。</div></section>
+  <footer class="footer">本页面显示依据用户最后一次申报仓位计算的信号；申报后若有未录入的交易，公开仓位与信号会滞后。<strong>仓位比例是按声明的资金预算估算，不代表证券账户实时仓位。</strong> 价格仅为取整后的观察带，不是精确可下单限价；实际交易须重新核对股数、可用现金、最低佣金和交易所规则。旧纸面历史已私有归档；下方11/12起点的四张卡片是另行核验的新模拟对照，与实际账本主卡片完全隔离。本页不连接券商、不下单，不承诺投资收益。</footer>
 </div>
 <script>
 "use strict";
@@ -110,6 +116,38 @@ function card(e){
     +'</div></details>'
     +'</article>';
 }
+function simulatedCard(e){
+  const note=e.market_date==="2026-11-12"?"11/12开盘已假设G0首仓，随后按当日收盘生成下一交易日信号": "沿用同一个假设账户，按收盘价生成下一交易日信号";
+  return '<article class="card '+esc(e.signal)+'">'
+    +'<div class="card-top"><span class="date">'+esc(e.market_date)+'</span><span class="tag">独立历史模拟</span></div>'
+    +'<div class="signal">'+esc(e.signal)+'</div>'
+    +'<div class="signal-sub">'+esc(e.strategy_rung)+' · 模拟规则回放，非实际成交</div>'
+    +'<div class="weights"><div><div class="label">模拟收盘仓位</div><div class="val">'+esc(e.stock_weight_pct)+'%</div></div>'
+    +'<div><div class="label">假设次开盘参考仓位</div><div class="val">'+esc(e.reference_target_weight_pct)+'%</div></div></div>'
+    +'<div class="row"><span>模拟仓位调整</span><strong>'+esc(e.suggested_change_pp)+' pp</strong></div>'
+    +'<div class="row"><span>历史市场收盘价</span><strong>¥'+Number(e.close_market).toFixed(3)+'</strong></div>'
+    +'<div class="zones"><div><div class="zone-title">下一模拟买入观察带</div><div class="zone">'+priceZone(e.next_buy_zone)+'</div></div>'
+    +'<div><div class="zone-title">下一模拟卖出观察带</div><div class="zone">'+priceZone(e.next_sell_zone)+'</div></div></div>'
+    +'<div class="row"><span>历史信号的下一交易日</span><strong>'+esc(e.next_weekday)+'</strong></div>'
+    +'<div class="disclaimer">'+note+'。该信号为HISTORICAL_ONLY，不可追单；假设佣金为3bp，实盘最低佣金与整手偏差可能改变净收益。</div>'
+    +'</article>';
+}
+fetch("./simulation.json",{cache:"no-store"})
+  .then(res=>{if(!res.ok)throw Error("historical simulation not available");return res.json();})
+  .then(feed=>{
+    if(feed.schema_version!==1||feed.symbol!=="159680.SZ"
+       ||feed.account_mode!=="COUNTERFACTUAL_PAPER_ONLY_NOV12_INITIAL_BUY"
+       ||feed.simulation_start!=="2026-11-12"||feed.simulation_end!=="2026-11-17"
+       ||feed.entry_budget_target_pct!=="2.0"||!Array.isArray(feed.entries)
+       ||feed.entries.length!==4||feed.entries.some(x=>x.timeliness!=="HISTORICAL_ONLY")
+       ||feed.entries.map(x=>x.market_date).join(",")!=="2026-11-17,2026-11-16,2026-11-13,2026-11-12"
+       )throw Error("unverified four-session simulation");
+    $("simulation-count").textContent="已核验 · 4张";
+    $("simulation-cards").innerHTML=feed.entries.map(simulatedCard).join("");
+  })
+  .catch(()=>{$("simulation-count").textContent="尚未核验";
+              $("simulation-cards").innerHTML='<div class="empty">四张模拟卡片尚未通过行情和规则验收，暂不展示。</div>';});
+
 function render(){
   const showing=current==="ALL"?entries:entries.filter(e=>e.signal===current);
   $("cards").innerHTML=showing.length?showing.map(card).join(""):'<div class="empty">该分类暂无经核验的实际申报账本信号。</div>';

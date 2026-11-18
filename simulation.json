@@ -1,0 +1,118 @@
+{
+  "account_mode": "COUNTERFACTUAL_PAPER_ONLY_NOV12_INITIAL_BUY",
+  "assumption": "Nov12 actual market open used for hypothetical 2% gross-budget G0; trade filled by official shared engine as integer board lots. Later T+1 opens follow historical market ONLY when projecting completed T decisions; T card projections use T close as hypothetical next open.",
+  "disclaimer": "FOUR HISTORICAL SIMULATED CARDS ONLY; not self-reported actual trades, not advice for today's expired opening, no broker actions.",
+  "entries": [
+    {
+      "close_market": "1.346",
+      "fee_model": "SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM",
+      "market_date": "2026-11-17",
+      "next_buy_zone": {
+        "direction": "BUY_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.35",
+        "low": "1.34",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_sell_zone": {
+        "direction": "SELL_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.44",
+        "low": "1.43",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_weekday": "2026-11-18",
+      "note": "按同一假设模拟账户逐日计算；买卖仅为历史回算，不代表任何真实成交。",
+      "reference_target_weight_pct": "13.5",
+      "signal": "BUY",
+      "simulated_initial_entry": "CARRIED_FROM_NOV12_SIMULATION",
+      "stock_weight_pct": "8.1",
+      "strategy_rung": "G4",
+      "suggested_change_pp": "5.4",
+      "timeliness": "HISTORICAL_ONLY"
+    },
+    {
+      "close_market": "1.354",
+      "fee_model": "SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM",
+      "market_date": "2026-11-16",
+      "next_buy_zone": {
+        "direction": "BUY_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.40",
+        "low": "1.39",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_sell_zone": {
+        "direction": "SELL_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.46",
+        "low": "1.45",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_weekday": "2026-11-17",
+      "note": "按同一假设模拟账户逐日计算；买卖仅为历史回算，不代表任何真实成交。",
+      "reference_target_weight_pct": "8.1",
+      "signal": "BUY",
+      "simulated_initial_entry": "CARRIED_FROM_NOV12_SIMULATION",
+      "stock_weight_pct": "5.4",
+      "strategy_rung": "G3",
+      "suggested_change_pp": "2.7",
+      "timeliness": "HISTORICAL_ONLY"
+    },
+    {
+      "close_market": "1.408",
+      "fee_model": "SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM",
+      "market_date": "2026-11-13",
+      "next_buy_zone": {
+        "direction": "BUY_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.46",
+        "low": "1.45",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_sell_zone": {
+        "direction": "SELL_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.53",
+        "low": "1.52",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_weekday": "2026-11-16",
+      "note": "按同一假设模拟账户逐日计算；买卖仅为历史回算，不代表任何真实成交。",
+      "reference_target_weight_pct": "5.6",
+      "signal": "BUY",
+      "simulated_initial_entry": "CARRIED_FROM_NOV12_SIMULATION",
+      "stock_weight_pct": "1.4",
+      "strategy_rung": "G2",
+      "suggested_change_pp": "4.2",
+      "timeliness": "HISTORICAL_ONLY"
+    },
+    {
+      "close_market": "1.458",
+      "fee_model": "SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM",
+      "market_date": "2026-11-12",
+      "next_buy_zone": {
+        "direction": "BUY_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.46",
+        "low": "1.45",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_sell_zone": {
+        "direction": "SELL_IF_MARKET_CLOSE_CROSSES",
+        "high": "1.53",
+        "low": "1.52",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_weekday": "2026-11-13",
+      "note": "假设11月12日开盘完成首仓；当日收盘再形成次日策略信号。",
+      "reference_target_weight_pct": "2.9",
+      "signal": "BUY",
+      "simulated_initial_entry": "INITIAL_G0_BUY_COMPLETED_IN_SIMULATION",
+      "stock_weight_pct": "1.5",
+      "strategy_rung": "G1",
+      "suggested_change_pp": "1.5",
+      "timeliness": "HISTORICAL_ONLY"
+    }
+  ],
+  "entry_budget_target_pct": "2.0",
+  "fee_model": "SIMULATED_3BP_EACH_SIDE_NOT_REAL_5CNY_MINIMUM",
+  "schema_version": 1,
+  "simulation_end": "2026-11-17",
+  "simulation_start": "2026-11-12",
+  "strategy_version": "NTWR-A V11.18-HS",
+  "symbol": "159680.SZ"
+}
