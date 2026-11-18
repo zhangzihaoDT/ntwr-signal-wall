@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="description" content="159680.SZ · NTWR-A 固定 2% 首仓，每日模拟 BUY / SELL / HOLD 信号卡片墙">
+  <meta name="description" content="159680.SZ · NTWR-A V11.18-HS 半步长金字塔独立纸面账户（2026-11-18切换），历史V1.0记录保留">
   <title>NTWR Signal Wall · 159680.SZ</title>
   <style>
     :root{--ink:#172022;--muted:#65706f;--paper:#f7f7f4;--border:#e7e9e5;--sea:#076c68;--buy:#216c55;--sell:#b0543d;--hold:#7168a0;--radius:22px}
@@ -82,7 +82,7 @@
       <div class="hero-copy">
         <div class="eyebrow">159680.SZ / NTWR-A / DAILY LOG</div>
         <h1>每日交易信号<br>灵感墙<span style="color:#9dd4bf">.</span></h1>
-        <p class="hero-sub">一张卡片，记录一天的市场判断。优先显示已申报的实际持仓；未入场时依据 SMA250 独立判断 BUY 或 HOLD；若择时允许，再计算 2% 首仓参考。原策略模拟数据独立保留。</p>
+        <p class="hero-sub">从 2026-11-18 收盘起切换 V11.18-HS 半步长金字塔；11-19 首次独立纸面账户模拟建仓 2%，此买入仅是初始化预算，非经过验证的择时信号。V1.0 的旧卡片原样留存，真实账户持仓尚未核实。</p>
         <div class="hero-links"><a class="hero-link" href="#signal-wall">浏览每日卡片 ↓</a><a class="hero-link" href="https://github.com/zhangzihaoDT/grid-trading/actions/workflows/ntwr-a-159680-daily.yml" target="_blank" rel="noreferrer">查看运行记录 ↗</a></div>
       </div>
       <div class="hero-metrics">
@@ -97,7 +97,7 @@
       <div class="stat"><div class="stat-label">策略首仓</div><div class="stat-value">2<span style="font-size:16px">%</span></div></div>
     </section>
     <main id="signal-wall">
-      <div class="section-head"><div><h2>交易日卡片</h2><p>未成交不等于已建仓 · 实际仓位以手工记录为准 · 详情保留原策略回放</p></div>
+      <div class="section-head"><div><h2>交易日卡片</h2><p>2026-11-18 起使用 V11.18-HS 独立纸面账户 · 不继承 V1.0 模拟份额 · 真实持仓未核实</p></div>
         <div class="filters" role="group" aria-label="按信号筛选">
           <button class="filter" type="button" data-filter="ALL" aria-pressed="true">全部</button>
           <button class="filter" type="button" data-filter="BUY" aria-pressed="false">BUY</button>
@@ -108,7 +108,7 @@
       <div id="cards" class="wall" aria-live="polite"><div class="empty">正在加载已核验的交易日信号…</div></div>
     </main>
     <footer class="footer">
-      <div><b>关于本页面</b><div>真实仓位来自使用者手工申报，当前确认截至 2026-11-16 为 0%，所有买入信号均未成交。未来若没有新的成交确认，仅沿用未核实的手工账本，不代表证券账户实时持仓。首仓数量按假设本金 10 万元举例，实际资金金额未知。空仓择时信号采用预登记的收盘价 ≤ SMA250 研究规则，并没有被证实能提升收益。历史策略账户另行保留，不连接券商、不下单；补报不能追单。</div></div>
+      <div><b>关于本页面</b><div>2026-11-12至11-16仅有此前手工确认的0%持仓记录；11-17之后的实际成交与仓位均未核实，不能假定持续空仓。11-18起展示V11.18-HS独立纸面账户，首仓2%只是策略账户起点，并非实际入场指令或独立择时信号。旧V1.0/SMA250卡片是历史档案，不会追溯改写。全站不连接券商、不下单；过期开盘窗口的补报不能追单。</div></div>
       <div>© NTWR Signal Wall · 159680.SZ<br>数据以 GitHub Actions / Issue #4 的正式运行记录为准。</div>
     </footer>
   </div>
@@ -126,6 +126,7 @@
     let entries = [], chosen = "ALL";
     const visibleSignal = e => e.position_view?.entry_signal || e.signal;
     function card(e) {
+      const hs=e.policy==="ntwr_a_v11_18" && e.strategy_version==="NTWR-A V11.18-HS pyramid grid / fresh 2% paper first entry";
       const view=e.position_view && e.position_view.account_view==="MANUAL_NO_REPORTED_FILLS" ? e.position_view : null;
       const r=(view?.reference_open||e.reference_open||{});
       const target=percent(view?view.entry_weight:e.target_weight);
@@ -136,14 +137,17 @@
       const historical=e.timeliness==="HISTORICAL_ONLY";
       const confirmed=view?.confirmation==="CONFIRMED_FLAT";
       const visualSignal=visibleSignal(e);
-      const signalCaption=view?('SMA250 空仓择时 · '+(visualSignal==="BUY"?'允许首次入场':'继续等待')+' · 尚未成交'):label[e.signal];
-      const viewBadge=view?(confirmed?'已确认 0%':'未核实 0%'):(historical?'历史回算':'已核验');
-      const note=view?'手工记录持仓':'模拟收盘仓位';
+      const signalCaption=hs?(e.paper_account_phase==="FIRST_OPEN_REFERENCE"?
+        'V11.18-HS · 首仓2%固定预算参考（非择时认证）':
+        'V11.18-HS · 半步长金字塔模拟信号'):
+        (view?('SMA250 空仓择时 · '+(visualSignal==="BUY"?'允许首次入场':'继续等待')+' · 尚未成交'):label[e.signal]);
+      const viewBadge=hs?(historical?'HS 历史回算':'HS 纸面账户'):(view?(confirmed?'已确认 0%':'未核实 0%'):(historical?'历史回算':'已核验'));
+      const note=view?'手工记录持仓':(hs?'新策略独立模拟 · 非真实持仓':'模拟收盘仓位');
       const source = /^https:\/\/github\.com\/zhangzihaoDT\/grid-trading\/actions\/runs\/\d+$/.test(e.run_url||"") ? e.run_url : "https://github.com/zhangzihaoDT/grid-trading/actions";
       return '<article class="card '+h(visualSignal.toLowerCase())+'">'
         +'<div class="card-top"><div><div class="card-date">'+h(e.market_date)+'</div><div class="day-name">'+dayName(e.market_date)+'</div></div><span class="tag">'+viewBadge+'</span></div>'
         +'<div class="signal">'+h(visualSignal)+'</div><div class="signal-zh">'+signalCaption+'</div>'
-        +'<div class="card-main"><div><div class="k">'+(view?'手工持仓':'模拟实际仓位')+'</div><div class="v">'+actual+'</div><div class="mini-note">'+note+'</div></div><div><div class="k">'+(view?'择时后首仓比例':'策略目标仓位')+'</div><div class="v">'+target+'</div><div class="mini-note">'+(view?'BUY 时 2% · HOLD 时 0%':'SMA250 策略计算')+'</div></div></div>'
+        +'<div class="card-main"><div><div class="k">'+(view?'手工持仓':'模拟实际仓位')+'</div><div class="v">'+actual+'</div><div class="mini-note">'+note+'</div></div><div><div class="k">'+(view?'择时后首仓比例':(hs?'次开盘情景仓位':'策略目标仓位'))+'</div><div class="v">'+target+'</div><div class="mini-note">'+(view?'BUY 时 2% · HOLD 时 0%':(hs?'仅是收盘价基准情景':'SMA250 策略计算'))+'</div></div></div>'
         +'<div class="weight-line" title="深色为实际仓位，竖线为目标仓位" style="--actual:'+act+'%;--target:'+cap+'%"><div class="actual"></div><div class="target"></div></div>'
         +'<div class="card-foot"><span>目标缺口</span><strong>'+signed(view?view.entry_gap:e.weight_gap)+'</strong></div>'
         +'<div class="card-foot"><span>当日收盘价</span><strong>¥'+Number(e.close).toFixed(3)+'</strong></div>'
@@ -152,7 +156,12 @@
         +'<div class="card-foot"><span>'+(view?'假设本金 ¥100,000 · 首仓示例':'假设下个开盘 · '+h(r.execution||"—"))+'</span><strong>'+Number(r.quantity||0).toLocaleString("zh-CN")+' 份</strong></div>'
         +'<details class="details"><summary>查看完整信号测算</summary><div class="detail-body">'
         +'<div class="detail-row"><span>次一工作日（估计）</span><strong>'+h(e.next_open_date_estimate)+'</strong></div>'
-        +'<div class="detail-row"><span>SMA250</span><strong>¥'+Number(e.sma250).toFixed(4)+'</strong></div>'
+        +(hs?'<div class="detail-row"><span>策略版本</span><strong>NTWR-A V11.18-HS</strong></div>'
+                +'<div class="detail-row"><span>本轮网格锚点</span><strong>'+h(e.grid_anchor===null?'待首仓成交':'¥'+Number(e.grid_anchor).toFixed(3))+'</strong></div>'
+                +'<div class="detail-row"><span>已成交档位</span><strong>'+h((e.held_levels||[]).join(', ')||'无')+'</strong></div>'
+                +'<div class="detail-row"><span>纸面账户起点</span><strong>'+h(e.paper_start_date)+'</strong></div>'
+                +'<div style="margin:10px 0;color:#9b6842">真实账户持仓未核实；本卡仅是独立模拟账户，不能把旧V1.0仓位继承到此策略。模型首仓2%不构成独立择时验证。</div>'
+                :'<div class="detail-row"><span>SMA250</span><strong>¥'+Number(e.sma250).toFixed(4)+'</strong></div>')
         +(view?'<div class="detail-row"><span>入场择时规则</span><strong>收盘 ≤ SMA250 才 BUY</strong></div>'
                +'<div class="detail-row"><span>独立择时判定</span><strong>'+h(view.entry_signal)+'</strong></div>'
                +'<div class="detail-row"><span>判断时点</span><strong>T 日收盘 → T+1 开盘</strong></div>'
@@ -172,7 +181,7 @@
              +'<div class="detail-row"><span>SMA250 目标仓位</span><strong>'+percent(e.target_weight)+'</strong></div>'
              +'<div class="detail-row"><span>模拟净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
              +'</div>':'')
-        +'<div style="margin-top:13px;color:#7a8b81">'+(view?('空仓择时信号由经核验的收盘价与 SMA250 决定：'+(visualSignal==="BUY"?'满足门槛，给出下一开盘的 2% 首仓参考。':'不满足门槛，继续空仓等待，首仓参考 0%。')+'此门槛是研究候选，经济优势未获证实；原始纸面信号另列于上。'+(confirmed?'本日无成交已手工确认。':'本日实际持仓尚未重新确认。')):'')+(historical?' 历史补报不表示当前可执行买卖。':' 当前开盘仍需按真实价格、真实可用资金核算。')+'</div>'
+        +'<div style="margin-top:13px;color:#7a8b81">'+(hs?'V11.18-HS按固定锚点和价格阶梯生成交易意图。新策略从2026-11-19开盘模拟独立首仓，切换前历史卡片不作修改；不代表用户实际交易。 ': '')+(view?('空仓择时信号由经核验的收盘价与 SMA250 决定：'+(visualSignal==="BUY"?'满足门槛，给出下一开盘的 2% 首仓参考。':'不满足门槛，继续空仓等待，首仓参考 0%。')+'此门槛是研究候选，经济优势未获证实；原始纸面信号另列于上。'+(confirmed?'本日无成交已手工确认。':'本日实际持仓尚未重新确认。')):'')+(historical?' 历史补报不表示当前可执行买卖。':' 当前开盘仍需按真实价格、真实可用资金核算。')+'</div>'
         +'<a class="detail-source" href="'+h(source)+'" target="_blank" rel="noreferrer">查看运行证据 ↗</a>'
         +'</div></details></article>';
     }

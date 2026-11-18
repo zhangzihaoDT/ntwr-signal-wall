@@ -564,6 +564,6 @@
     }
   ],
   "schema_version": 1,
-  "strategy": "NTWR-A / fixed 2% initial allocation",
+  "strategy": "NTWR-A V1.0 history / V11.18-HS paper from 2026-11-18",
   "symbol": "159680.SZ"
 }
