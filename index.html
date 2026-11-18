@@ -4,226 +4,134 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="description" content="159680.SZ · NTWR-A V11.18-HS 半步长金字塔独立纸面账户（2026-11-18切换），历史V1.0记录保留">
-  <title>NTWR Signal Wall · 159680.SZ</title>
+  <meta name="description" content="159680.SZ / NTWR-A V11.18-HS。仅展示用户自报账本推导的仓位比例、价格观察带与信号；不公开实际成交明细。">
+  <title>NTWR Signal Wall · 基于申报持仓的网格信号</title>
   <style>
-    :root{--ink:#172022;--muted:#65706f;--paper:#f7f7f4;--border:#e7e9e5;--sea:#076c68;--buy:#216c55;--sell:#b0543d;--hold:#7168a0;--radius:22px}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}button{font:inherit}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #1d8580;outline-offset:4px}
-    .shell{max-width:1500px;margin:auto;padding:0 34px 55px}
-    .nav{height:90px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .logo{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:760;letter-spacing:.11em}
-    .logo-mark{width:36px;height:36px;border-radius:12px;background:#182b29;color:#c6efdf;display:grid;place-items:center;font-size:20px;letter-spacing:0}
-    .nav-right{display:flex;align-items:center;gap:18px;color:var(--muted);font-size:12px}
-    .nav-link{border-bottom:1px solid #a8afab;padding-bottom:3px}.tiny-live{display:inline-flex;align-items:center;gap:7px;font-weight:650;color:#225f50}.dot{display:inline-block;width:7px;height:7px;background:#4ab588;border-radius:100%;box-shadow:0 0 0 4px #e1f4eb}
-    .hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(265px,.8fr);min-height:325px;gap:28px;padding:44px 48px;background:#192d2b;color:white;border-radius:28px}
-    .hero:before{content:"";position:absolute;right:-4%;top:-45%;width:55%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 40%,#65aaa07a,transparent 63%)}
-    .hero:after{content:"";position:absolute;right:15%;bottom:-175px;width:390px;height:390px;border:1px solid #addfc043;border-radius:50%}
-    .hero-copy,.hero-metrics{position:relative;z-index:1}.eyebrow{font-size:12px;letter-spacing:.18em;font-weight:670;color:#b9dcd1}
-    h1{margin:16px 0 14px;font-size:clamp(38px,5vw,66px);letter-spacing:-.055em;line-height:1.08;font-weight:770}
-    .hero-sub{margin:0;color:#b8cfca;line-height:1.75;font-size:14px;max-width:480px}
-    .hero-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.hero-link{border:1px solid #8eaaa270;padding:10px 15px;border-radius:100px;color:#e3f3ed;font-size:12px;font-weight:650}.hero-link:hover{background:#ffffff16}
-    .hero-metrics{align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;text-align:right}
-    .run-label{font-size:12px;color:#d3e5de;letter-spacing:.05em}.run-number{font-weight:800;line-height:.95;letter-spacing:-.09em;font-size:clamp(84px,10vw,143px);color:#d8f4d9;font-variant-numeric:tabular-nums}
-    .run-caption{margin:7px 0 0;font-size:14px;color:#d3e6dd}.newest{font-size:12px;color:#c6d7d2;line-height:1.7}
-    .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:18px 0 39px}
-    .stat{background:white;border:1px solid var(--border);border-radius:18px;padding:18px 22px;min-height:94px}
-    .stat-label{font-size:12px;color:#78817e}.stat-value{font-size:27px;line-height:1.18;margin-top:7px;font-weight:770;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-    .section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
-    .section-head h2{font-size:28px;letter-spacing:-.05em;line-height:1.2;margin:0 0 6px}.section-head p{font-size:12px;color:var(--muted);margin:0}
-    .filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-    .filter{border:1px solid #e2e5df;background:#fff;border-radius:999px;padding:10px 15px;cursor:pointer;color:#6b7671;font-size:12px;font-weight:690;transition:background .15s,border .15s}
-    .filter[aria-pressed="true"]{background:#1c3531;border-color:#1c3531;color:#fff}.filter:hover:not([aria-pressed="true"]){border-color:#89a49a}
-    /* Row-first order: the first three daily cards occupy the first three columns. */
-    .wall{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start;min-height:150px}
-    /* Progressive enhancement: the script sizes row spans for a compact masonry wall. */
-    .wall.masonry{grid-auto-rows:8px}
-    .wall>.empty{grid-column:1/-1}
-    .card{display:block;width:100%;margin:0;min-width:0;align-self:start;padding:22px;border:1px solid #e9eae5;background:white;border-radius:var(--radius);box-shadow:0 3px 15px #21342b04;transition:transform .22s,box-shadow .22s;overflow:hidden}
-    .card:hover{transform:translateY(-3px);box-shadow:0 16px 30px #1f302214}
-    .card.buy{background:#e9f3e9;border-color:#dcebdc}.card.sell{background:#f9eae4;border-color:#f0dcd3}.card.hold{background:#eeebf7;border-color:#e4e0f0}
-    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-    .card-date{font-size:14px;font-weight:760;letter-spacing:-.02em}.day-name{font-size:11px;color:var(--muted);margin-top:4px}
-    .tag{padding:7px 9px;border-radius:9px;background:#fff9;font-size:10px;letter-spacing:.055em;font-weight:750;color:#47564d}
-    .signal{font-weight:830;letter-spacing:-.065em;font-size:clamp(38px,4vw,59px);margin:25px 0 7px;line-height:1}
-    .buy .signal{color:var(--buy)}.sell .signal{color:var(--sell)}.hold .signal{color:var(--hold)}
-    .signal-zh{font-size:13px;color:#58645f}.card-main{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;border-top:1px solid #90a29a4d;padding-top:17px}
-    .k{font-size:11px;color:#727e78}.v{font-size:20px;letter-spacing:-.04em;font-weight:760;margin-top:5px;font-variant-numeric:tabular-nums}
-    .mini-v{font-size:14px;font-weight:730;margin-top:4px}
-    .mini-note{font-size:11px;color:#7b8880;margin-top:4px}
-    .weight-line{height:8px;border-radius:12px;background:#acb6b042;position:relative;margin:20px 0 14px;overflow:hidden}
-    .weight-line .actual{height:100%;border-radius:12px;background:#304a44;width:var(--actual)}
-    .weight-line .target{position:absolute;top:0;bottom:0;left:var(--target);width:3px;background:#e09649}
-    .card-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #8a9b9338;margin-top:14px;padding-top:14px;font-size:11px;color:#65736b}
-    .card-foot strong{font-size:13px;color:#273b33;font-variant-numeric:tabular-nums}
-    .details{border-top:1px solid #8a9b9338;margin-top:17px;padding-top:13px}
-    .details summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;font-weight:700;cursor:pointer;color:#364d42}
-    .details summary::-webkit-details-marker{display:none}.details summary:after{content:"+";font-size:18px;font-weight:400}.details[open] summary:after{content:"−"}
-    .detail-body{padding-top:16px;font-size:12px;color:#51645a;line-height:1.8}
-    .detail-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed #8c9d932e;padding:4px 0}.detail-row strong{font-variant-numeric:tabular-nums;color:#24342c}
-    .scenario{width:100%;margin-top:13px;border-collapse:collapse;font-size:11px}.scenario th{text-align:left;font-weight:600;color:#708078}.scenario th,.scenario td{padding:7px 2px;border-bottom:1px solid #90a29a38}.scenario td:last-child{text-align:right;font-variant-numeric:tabular-nums}
-    .detail-source{display:inline-flex;align-items:center;gap:4px;margin-top:17px;text-decoration:underline;text-underline-offset:4px}
-    .empty{padding:70px 20px;text-align:center;background:white;border:1px dashed #bbc8c1;border-radius:20px;color:#79877f;font-size:14px}
-    .footer{margin-top:58px;border-top:1px solid #dbe0d9;padding:28px 0 10px;display:flex;gap:25px;justify-content:space-between;color:#748079;font-size:11px;line-height:1.8}
-    .footer b{color:#3c4d42}.footer>div{max-width:700px}
-    @media(max-width:1180px){.wall{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:900px){.hero{grid-template-columns:1fr;padding:30px;min-height:320px}.hero-metrics{flex-direction:row;align-items:end;text-align:left}.run-number{font-size:90px}.stat-strip{grid-template-columns:repeat(2,1fr)}.section-head{align-items:flex-start;flex-direction:column}.wall{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:540px){.shell{padding:0 16px 34px}.nav{height:72px}.nav-right{gap:8px}.nav-link{font-size:11px}.hero{padding:26px 24px;border-radius:22px}.hero-metrics{gap:8px;align-items:end}.run-number{font-size:74px}.hero h1{font-size:39px}.stat-strip{gap:8px;margin:12px 0 28px}.stat{padding:16px;min-height:80px}.stat-value{font-size:25px}.wall{grid-template-columns:1fr}.section-head h2{font-size:25px}.footer{flex-direction:column;gap:7px}}
-    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+    *{box-sizing:border-box}
+    :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft Yahei",sans-serif;color:#24332c;background:#f7f7f2}
+    body{margin:0} a{color:inherit;text-decoration:none}
+    .shell{max-width:1230px;margin:auto;padding:0 28px 50px}
+    .nav{display:flex;align-items:center;justify-content:space-between;height:85px;gap:15px}
+    .logo{font-size:15px;letter-spacing:.08em;font-weight:800;color:#234639}
+    .nav-link{font-size:12px;border:1px solid #d9e0d8;border-radius:25px;padding:9px 14px;color:#52695b}
+    .hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(200px,.6fr);gap:24px;background:#1e3934;color:#fff;padding:43px 48px;border-radius:28px;min-height:296px}
+    .eyebrow{text-transform:uppercase;color:#acdbcf;letter-spacing:.14em;font-size:11px;font-weight:700}
+    h1{font-size:clamp(32px,4.3vw,58px);letter-spacing:-.045em;line-height:1.15;margin:18px 0}
+    .hero p{color:#c7d9cf;font-size:14px;line-height:1.9;max-width:650px}
+    .hero-stats{display:flex;flex-direction:column;align-items:end;justify-content:center;text-align:right}
+    .big-number{font-size:clamp(68px,8vw,112px);font-weight:800;line-height:1;letter-spacing:-.09em;color:#e5f4ed}
+    .subtle{font-size:12px;color:#a6c8b6}
+    .state{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 25px}
+    .chip{border:1px solid #d9e2db;border-radius:30px;padding:9px 14px;font-size:12px;color:#51645a}
+    .intro{margin:33px 0 20px}
+    .intro h2{font-size:28px;margin:0 0 8px;letter-spacing:-.035em}
+    .intro p{color:#667569;font-size:13px;line-height:1.9;margin:0}
+    .bar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+    .filter{border:1px solid #cbd6cd;background:#fff;color:#42574b;cursor:pointer;padding:9px 15px;border-radius:18px;font:600 12px inherit}
+    .filter[aria-pressed="true"]{background:#234639;color:#fff;border-color:#234639}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
+    .card{background:#fff;border:1px solid #e7ece5;border-radius:18px;padding:23px;box-shadow:0 7px 32px #1c42330a;display:flex;flex-direction:column;gap:15px;min-width:0}
+    .card-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .date{font-size:13px;font-weight:750;color:#375344}
+    .tag{font-size:10px;border:1px solid #dde5dc;border-radius:15px;padding:5px 9px;color:#6c7a72}
+    .signal{font-size:41px;font-weight:850;letter-spacing:-.07em;line-height:1.05}
+    .BUY .signal{color:#267759}.SELL .signal{color:#ae683d}.HOLD .signal{color:#566963}
+    .signal-sub{font-size:11px;color:#7a8880;margin-top:-11px}
+    .weights{background:#f6f8f5;border-radius:13px;padding:14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .label{font-size:11px;color:#7a8980;line-height:1.5}
+    .val{font-size:25px;font-weight:780;letter-spacing:-.04em;margin-top:4px}
+    .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid #eef1ed;padding-bottom:9px;font-size:12px;line-height:1.7}
+    .row strong{font-size:13px;white-space:nowrap;color:#344b3f}
+    .zone-title{font-size:10px;letter-spacing:.05em;color:#809086}
+    .zone{font-size:18px;font-weight:800;margin-top:4px;color:#304c3d;letter-spacing:-.02em}
+    .zones{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .disclaimer{font-size:11px;color:#7b8b81;line-height:1.9;border-top:1px solid #ecf0ea;padding-top:12px}
+    details{font-size:11px;color:#728178;line-height:1.75}summary{cursor:pointer;font-weight:700}
+    .empty{grid-column:1/-1;text-align:center;border:1px dashed #cfdace;border-radius:16px;padding:45px 25px;color:#607267;background:#fff}
+    .footer{border-top:1px solid #dfe5dd;padding-top:25px;margin-top:45px;color:#718077;font-size:11px;line-height:1.95}
+    @media(max-width:880px){.hero{grid-template-columns:1fr}.hero-stats{align-items:start;text-align:left}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:580px){.shell{padding:0 14px 30px}.nav{height:65px}.hero{padding:28px 24px;min-height:auto}.grid{grid-template-columns:1fr}.card{padding:22px}.intro h2{font-size:24px}.big-number{font-size:76px}}
   </style>
 </head>
 <body>
-  <div class="shell">
-    <nav class="nav" aria-label="主导航">
-      <div class="logo"><div class="logo-mark" aria-hidden="true">⌁</div><span>NTWR <span style="color:#9da8a2">/</span> SIGNAL WALL</span></div>
-      <div class="nav-right"><span class="tiny-live"><span class="dot"></span>模拟信号</span><a class="nav-link" href="https://github.com/zhangzihaoDT/grid-trading/issues/4" target="_blank" rel="noreferrer">Issue #4 ↗</a></div>
-    </nav>
-    <header class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow">159680.SZ / NTWR-A / DAILY LOG</div>
-        <h1>每日交易信号<br>灵感墙<span style="color:#9dd4bf">.</span></h1>
-        <p class="hero-sub">从 2026-11-18 收盘起切换 V11.18-HS 半步长金字塔；11-19 首次独立纸面账户模拟建仓 2%，此买入仅是初始化预算，非经过验证的择时信号。V1.0 的旧卡片原样留存，真实账户持仓尚未核实。</p>
-        <div class="hero-links"><a class="hero-link" href="#signal-wall">浏览每日卡片 ↓</a><a class="hero-link" href="https://github.com/zhangzihaoDT/grid-trading/actions/workflows/ntwr-a-159680-daily.yml" target="_blank" rel="noreferrer">查看运行记录 ↗</a></div>
-      </div>
-      <div class="hero-metrics">
-        <div><div class="run-label">累计已核验的交易日</div><div class="run-number" id="day-count">—</div><p class="run-caption">RUNNING DAYS</p></div>
-        <div class="newest" id="latest-date">正在读取信号档案…</div>
-      </div>
-    </header>
-    <section class="stat-strip" aria-label="信号统计">
-      <div class="stat"><div class="stat-label">BUY · 买入</div><div class="stat-value" id="buy-count">—</div></div>
-      <div class="stat"><div class="stat-label">SELL · 卖出</div><div class="stat-value" id="sell-count">—</div></div>
-      <div class="stat"><div class="stat-label">HOLD · 观望</div><div class="stat-value" id="hold-count">—</div></div>
-      <div class="stat"><div class="stat-label">策略首仓</div><div class="stat-value">2<span style="font-size:16px">%</span></div></div>
-    </section>
-    <main id="signal-wall">
-      <div class="section-head"><div><h2>交易日卡片</h2><p>2026-11-18 起使用 V11.18-HS 独立纸面账户 · 不继承 V1.0 模拟份额 · 真实持仓未核实</p></div>
-        <div class="filters" role="group" aria-label="按信号筛选">
-          <button class="filter" type="button" data-filter="ALL" aria-pressed="true">全部</button>
-          <button class="filter" type="button" data-filter="BUY" aria-pressed="false">BUY</button>
-          <button class="filter" type="button" data-filter="SELL" aria-pressed="false">SELL</button>
-          <button class="filter" type="button" data-filter="HOLD" aria-pressed="false">HOLD</button>
-        </div>
-      </div>
-      <div id="cards" class="wall" aria-live="polite"><div class="empty">正在加载已核验的交易日信号…</div></div>
-    </main>
-    <footer class="footer">
-      <div><b>关于本页面</b><div>2026-11-12至11-16仅有此前手工确认的0%持仓记录；11-17之后的实际成交与仓位均未核实，不能假定持续空仓。11-18起展示V11.18-HS独立纸面账户，首仓2%只是策略账户起点，并非实际入场指令或独立择时信号。旧V1.0/SMA250卡片是历史档案，不会追溯改写。全站不连接券商、不下单；过期开盘窗口的补报不能追单。</div></div>
-      <div>© NTWR Signal Wall · 159680.SZ<br>数据以 GitHub Actions / Issue #4 的正式运行记录为准。</div>
-    </footer>
-  </div>
-  <script>
-    "use strict";
-    const wall = document.querySelector("#cards");
-    const buttons = Array.from(document.querySelectorAll("[data-filter]"));
-    const text = (id, value) => { document.getElementById(id).textContent = String(value); };
-    const h = value => String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const percent = (value, digits=2) => (Number(value)*100).toFixed(digits)+"%";
-    const cny = value => "¥"+Number(value).toLocaleString("zh-CN",{maximumFractionDigits:2,minimumFractionDigits:0});
-    const signed = value => (Number(value)>0?"+":"")+(Number(value)*100).toFixed(2)+" pp";
-    const dayName = date => ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][new Date(date+"T12:00:00+08:00").getUTCDay()];
-    const label = {BUY:"买入信号",SELL:"卖出信号",HOLD:"继续观望"};
-    let entries = [], chosen = "ALL";
-    const visibleSignal = e => e.position_view?.entry_signal || e.signal;
-    function card(e) {
-      const hs=e.policy==="ntwr_a_v11_18" && e.strategy_version==="NTWR-A V11.18-HS pyramid grid / fresh 2% paper first entry";
-      const view=e.position_view && e.position_view.account_view==="MANUAL_NO_REPORTED_FILLS" ? e.position_view : null;
-      const r=(view?.reference_open||e.reference_open||{});
-      const target=percent(view?view.entry_weight:e.target_weight);
-      const actual=percent(view?view.recorded_weight:e.actual_weight);
-      const cap=Math.min(100,Math.max(0,Number(view?view.entry_weight:e.target_weight)*100));
-      const act=Math.min(100,Math.max(0,Number(view?view.recorded_weight:e.actual_weight)*100));
-      const rows=((view?.opening_scenarios)||e.opening_scenarios||[]).map(x=>'<tr><td>'+'¥'+Number(x.candidate_open_price).toFixed(3)+'</td><td>'+h(x.execution)+'</td><td>'+Number(x.quantity).toLocaleString("zh-CN")+' 份</td></tr>').join("");
-      const historical=e.timeliness==="HISTORICAL_ONLY";
-      const confirmed=view?.confirmation==="CONFIRMED_FLAT";
-      const visualSignal=visibleSignal(e);
-      const signalCaption=hs?(e.paper_account_phase==="FIRST_OPEN_REFERENCE"?
-        'V11.18-HS · 首仓2%固定预算参考（非择时认证）':
-        'V11.18-HS · 半步长金字塔模拟信号'):
-        (view?('SMA250 空仓择时 · '+(visualSignal==="BUY"?'允许首次入场':'继续等待')+' · 尚未成交'):label[e.signal]);
-      const viewBadge=hs?(historical?'HS 历史回算':'HS 纸面账户'):(view?(confirmed?'已确认 0%':'未核实 0%'):(historical?'历史回算':'已核验'));
-      const note=view?'手工记录持仓':(hs?'新策略独立模拟 · 非真实持仓':'模拟收盘仓位');
-      const source = /^https:\/\/github\.com\/zhangzihaoDT\/grid-trading\/actions\/runs\/\d+$/.test(e.run_url||"") ? e.run_url : "https://github.com/zhangzihaoDT/grid-trading/actions";
-      return '<article class="card '+h(visualSignal.toLowerCase())+'">'
-        +'<div class="card-top"><div><div class="card-date">'+h(e.market_date)+'</div><div class="day-name">'+dayName(e.market_date)+'</div></div><span class="tag">'+viewBadge+'</span></div>'
-        +'<div class="signal">'+h(visualSignal)+'</div><div class="signal-zh">'+signalCaption+'</div>'
-        +'<div class="card-main"><div><div class="k">'+(view?'手工持仓':'模拟实际仓位')+'</div><div class="v">'+actual+'</div><div class="mini-note">'+note+'</div></div><div><div class="k">'+(view?'择时后首仓比例':(hs?'次开盘情景仓位':'策略目标仓位'))+'</div><div class="v">'+target+'</div><div class="mini-note">'+(view?'BUY 时 2% · HOLD 时 0%':(hs?'仅是收盘价基准情景':'SMA250 策略计算'))+'</div></div></div>'
-        +'<div class="weight-line" title="深色为实际仓位，竖线为目标仓位" style="--actual:'+act+'%;--target:'+cap+'%"><div class="actual"></div><div class="target"></div></div>'
-        +'<div class="card-foot"><span>目标缺口</span><strong>'+signed(view?view.entry_gap:e.weight_gap)+'</strong></div>'
-        +'<div class="card-foot"><span>当日收盘价</span><strong>¥'+Number(e.close).toFixed(3)+'</strong></div>'
-        +(view?'<div class="card-foot"><span>SMA250 择时门槛</span><strong>¥'+Number(view.timing.ma250).toFixed(3)+'</strong></div>'
-               +'<div class="card-foot"><span>相对均线偏离</span><strong>'+(Number(view.timing.deviation_pct)>0?'+':'')+Number(view.timing.deviation_pct).toFixed(2)+'%</strong></div>':'')
-        +'<div class="card-foot"><span>'+(view?'假设本金 ¥100,000 · 首仓示例':'假设下个开盘 · '+h(r.execution||"—"))+'</span><strong>'+Number(r.quantity||0).toLocaleString("zh-CN")+' 份</strong></div>'
-        +'<details class="details"><summary>查看完整信号测算</summary><div class="detail-body">'
-        +'<div class="detail-row"><span>次一工作日（估计）</span><strong>'+h(e.next_open_date_estimate)+'</strong></div>'
-        +(hs?'<div class="detail-row"><span>策略版本</span><strong>NTWR-A V11.18-HS</strong></div>'
-                +'<div class="detail-row"><span>本轮网格锚点</span><strong>'+h(e.grid_anchor===null?'待首仓成交':'¥'+Number(e.grid_anchor).toFixed(3))+'</strong></div>'
-                +'<div class="detail-row"><span>已成交档位</span><strong>'+h((e.held_levels||[]).join(', ')||'无')+'</strong></div>'
-                +'<div class="detail-row"><span>纸面账户起点</span><strong>'+h(e.paper_start_date)+'</strong></div>'
-                +'<div style="margin:10px 0;color:#9b6842">真实账户持仓未核实；本卡仅是独立模拟账户，不能把旧V1.0仓位继承到此策略。模型首仓2%不构成独立择时验证。</div>'
-                :'<div class="detail-row"><span>SMA250</span><strong>¥'+Number(e.sma250).toFixed(4)+'</strong></div>')
-        +(view?'<div class="detail-row"><span>入场择时规则</span><strong>收盘 ≤ SMA250 才 BUY</strong></div>'
-               +'<div class="detail-row"><span>独立择时判定</span><strong>'+h(view.entry_signal)+'</strong></div>'
-               +'<div class="detail-row"><span>判断时点</span><strong>T 日收盘 → T+1 开盘</strong></div>'
-               +'<div style="margin-top:10px;color:#9b6842">该择时门槛来自已预登记的研究候选，尚未证明稳定提升收益；规则成立不等于投资回报可预期。</div>':'')
-        +(view?'<div class="detail-row"><span>实际成交记录</span><strong>0 份 · 未执行</strong></div>'
-           +'<div class="detail-row"><span>持仓确认日期</span><strong>'+h(view.confirmed_flat_through)+'</strong></div>'
-           +'<div style="margin:12px 0;color:#68796d">下面是以 ¥100,000 假设本金计算的首次建仓示例，非你的账户资金或真实订单。</div>'
-           :'<div class="detail-row"><span>模拟账户净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
-            +'<div class="detail-row"><span>模拟可用现金</span><strong>'+cny(e.cash_cny)+'</strong></div>'
-            +'<div class="detail-row"><span>模拟持有份额</span><strong>'+Number(e.shares).toLocaleString("zh-CN")+'</strong></div>')
-        +'<div class="detail-row"><span>基准情景成交金额</span><strong>'+cny(r.notional_cny||0)+'</strong></div>'
-        +'<div class="detail-row"><span>基准情景成交额/NAV</span><strong>'+percent(r.notional_pct_nav||0)+'</strong></div>'
-        +'<table class="scenario"><thead><tr><th>假设开盘价</th><th>动作</th><th style="text-align:right">模拟数量</th></tr></thead><tbody>'+rows+'</tbody></table>'
-        +(view?'<div style="margin-top:16px;padding:12px;border-radius:9px;background:#ffffff80"><strong>原策略研究账户（独立保留）</strong>'
-             +'<div class="detail-row"><span>原始收盘策略信号</span><strong>'+h(e.signal)+'</strong></div>'
-             +'<div class="detail-row"><span>模拟仓位</span><strong>'+percent(e.actual_weight)+'</strong></div>'
-             +'<div class="detail-row"><span>SMA250 目标仓位</span><strong>'+percent(e.target_weight)+'</strong></div>'
-             +'<div class="detail-row"><span>模拟净值</span><strong>'+cny(e.nav_cny)+'</strong></div>'
-             +'</div>':'')
-        +'<div style="margin-top:13px;color:#7a8b81">'+(hs?'V11.18-HS按固定锚点和价格阶梯生成交易意图。新策略从2026-11-19开盘模拟独立首仓，切换前历史卡片不作修改；不代表用户实际交易。 ': '')+(view?('空仓择时信号由经核验的收盘价与 SMA250 决定：'+(visualSignal==="BUY"?'满足门槛，给出下一开盘的 2% 首仓参考。':'不满足门槛，继续空仓等待，首仓参考 0%。')+'此门槛是研究候选，经济优势未获证实；原始纸面信号另列于上。'+(confirmed?'本日无成交已手工确认。':'本日实际持仓尚未重新确认。')):'')+(historical?' 历史补报不表示当前可执行买卖。':' 当前开盘仍需按真实价格、真实可用资金核算。')+'</div>'
-        +'<a class="detail-source" href="'+h(source)+'" target="_blank" rel="noreferrer">查看运行证据 ↗</a>'
-        +'</div></details></article>';
-    }
-    // CSS multi-column balances item heights and can place the third daily card
-    // below earlier cards. A row-first grid preserves chronological reading order.
-    // Measure each card's natural height before activating masonry row spans.
-    let layoutScheduled=false;
-    function layoutMasonry(){
-      const cards=Array.from(wall.querySelectorAll(".card"));
-      wall.classList.remove("masonry");
-      cards.forEach(el=>{el.style.gridRowEnd="auto";});
-      if(!cards.length)return;
-      const heights=cards.map(el=>el.getBoundingClientRect().height);
-      wall.classList.add("masonry");
-      cards.forEach((el,i)=>{
-        el.style.gridRowEnd="span "+Math.max(1,Math.ceil((heights[i]+16)/24));
-      });
-    }
-    function scheduleMasonry(){
-      if(layoutScheduled)return;
-      layoutScheduled=true;
-      requestAnimationFrame(()=>{layoutScheduled=false;layoutMasonry();});
-    }
-    function render(){
-      const showing=chosen==="ALL"?entries:entries.filter(x=>visibleSignal(x)===chosen);
-      wall.classList.remove("masonry");
-      wall.innerHTML=showing.length?showing.map(card).join(""):'<div class="empty">该筛选下尚无已核验交易日信号。</div>';
-      scheduleMasonry();
-    }
-    wall.addEventListener("toggle",e=>{if(e.target.tagName==="DETAILS")scheduleMasonry();},true);
-    window.addEventListener("resize",scheduleMasonry);
-    buttons.forEach(b=>b.addEventListener("click",()=>{chosen=b.dataset.filter;buttons.forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
-    fetch("./signals.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(feed=>{
-      if(feed.schema_version!==1 || feed.symbol!=="159680.SZ" || !Array.isArray(feed.entries))throw new Error("信号档案版本不匹配");
-      entries=feed.entries.slice().sort((a,b)=>b.market_date.localeCompare(a.market_date));
-      text("day-count",entries.length);
-      text("buy-count",entries.filter(e=>visibleSignal(e)==="BUY").length);
-      text("sell-count",entries.filter(e=>visibleSignal(e)==="SELL").length);
-      text("hold-count",entries.filter(e=>visibleSignal(e)==="HOLD").length);
-      text("latest-date",entries.length?"最近信号日 "+entries[0].market_date+" · 共 "+entries.length+" 个交易日":"暂无已核验记录");
-      render();
-    }).catch(err=>{wall.innerHTML='<div class="empty">信号档案尚未就绪：'+h(err.message)+'。请查看 GitHub Actions 发布状态。</div>';text("latest-date","数据载入未成功");});
-  </script>
+<div class="shell">
+  <nav class="nav"><span class="logo">NTWR / SIGNAL WALL</span><a class="nav-link" href="https://github.com/zhangzihaoDT/grid-trading/actions/workflows/ntwr-a-159680-daily.yml" target="_blank" rel="noreferrer">查看信号运行记录</a></nav>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">159680.SZ · NTWR-A V11.18-HS · PYRAMID GRID</div>
+      <h1>我的网格信号<span style="color:#a1d7bd">.</span></h1>
+      <p>依据最近一次主动申报的真实持仓，结合已完成的市场收盘行情，生成下一开盘的买入、卖出或观望参考。只展示仓位比例与经过隐私取整的价格观察区间，不展示任何成交价、成交份额、手续费、持仓成本或现金余额。</p>
+      <div class="state"><span class="chip" style="border-color:#74968b;color:#d5e9df">持仓来源 · 用户申报，非券商实时同步</span><span class="chip" style="border-color:#74968b;color:#d5e9df">不自动委托</span></div>
+    </div>
+    <div class="hero-stats"><div><div class="big-number" id="day-count">—</div><div class="subtle">已核验信号日 / VERIFIED DAYS</div></div></div>
+  </header>
+  <section class="intro">
+    <h2>最新交易信号</h2>
+    <p id="latest">尚无基于实际申报账本的新收盘信号。需等待当日收盘双源行情核验完成。</p>
+    <div class="bar">
+      <button class="filter" aria-pressed="true" data-filter="ALL">全部</button>
+      <button class="filter" aria-pressed="false" data-filter="BUY">BUY / 买入</button>
+      <button class="filter" aria-pressed="false" data-filter="SELL">SELL / 卖出</button>
+      <button class="filter" aria-pressed="false" data-filter="HOLD">HOLD / 观望</button>
+    </div>
+  </section>
+  <main id="cards" class="grid" aria-live="polite"><div class="empty">正在读取已核验的持仓信号…</div></main>
+  <footer class="footer">本页面显示依据用户最后一次申报仓位计算的信号；申报后若有未录入的交易，公开仓位与信号会滞后。<strong>仓位比例是按声明的资金预算估算，不代表证券账户实时仓位。</strong> 价格仅为取整后的观察带，不是精确可下单限价；实际交易须重新核对股数、可用现金、最低佣金和交易所规则。历史纸面账户已退出本看板，私有仓库保留旧记录。本页不连接券商、不下单，不承诺投资收益。</footer>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let entries=[],current="ALL";
+function priceZone(zone) {
+  if(!zone)return "暂无";
+  return "¥"+esc(zone.low)+" ～ "+esc(zone.high);
+}
+function card(e){
+  const historic=e.timeliness==="HISTORICAL_ONLY";
+  const label=e.signal==="BUY"?"买入条件已触发":e.signal==="SELL"?"卖出条件已触发":"当前无新交易条件";
+  const date=esc(e.market_date);
+  const fresh=e.ledger_freshness&&e.ledger_freshness.replace("USER_REPORTED_THROUGH_","");
+  return '<article class="card '+esc(e.signal)+'">'
+    +'<div class="card-top"><span class="date">'+date+'</span><span class="tag">'+(historic?'历史回算':'待下一开盘复核')+'</span></div>'
+    +'<div class="signal">'+esc(e.signal)+'</div>'
+    +'<div class="signal-sub">'+label+' · '+esc(e.strategy_rung)+'</div>'
+    +'<div class="weights"><div><div class="label">当前申报仓位（估计）</div><div class="val">'+esc(e.stock_weight_pct)+'%</div></div>'
+    +'<div><div class="label">参考调整后仓位</div><div class="val">'+esc(e.reference_target_weight_pct)+'%</div></div></div>'
+    +'<div class="row"><span>仓位参考变化</span><strong>'+esc(e.suggested_change_pp)+' pp</strong></div>'
+    +'<div class="row"><span>已核验市场收盘价</span><strong>¥'+Number(e.close_market).toFixed(3)+'</strong></div>'
+    +'<div class="zones"><div><div class="zone-title">下一买入观察区间</div><div class="zone">'+priceZone(e.next_buy_zone)+'</div></div>'
+    +'<div><div class="zone-title">下一卖出观察区间</div><div class="zone">'+priceZone(e.next_sell_zone)+'</div></div></div>'
+    +'<div class="row"><span>预计下一工作日</span><strong>'+esc(e.next_weekday)+'</strong></div>'
+    +'<div class="disclaimer">'+esc(e.reason)+' 下单前须在私有账本核对精确阈值、实际费用与最新成交。价格带仅供观察，不构成可直接成交的委托价。</div>'
+    +'<details><summary>信号依据及公开边界</summary><div style="padding-top:12px">持仓基于用户最后一次申报、未连接券商；最近记录更新日期：'+esc(fresh||"未知")+'。'
+    +'策略版本：'+esc(e.strategy_version)+'。买入曾观测到最低佣金，卖出费用未核实。'
+    +(historic?' 当前执行窗口已过去，不能追单。':' 下一开盘需要重新核对可成交条件。')
+    +'</div></details>'
+    +'</article>';
+}
+function render(){
+  const showing=current==="ALL"?entries:entries.filter(e=>e.signal===current);
+  $("cards").innerHTML=showing.length?showing.map(card).join(""):'<div class="empty">该分类暂无经核验的实际申报账本信号。</div>';
+}
+document.querySelectorAll(".filter").forEach(btn=>btn.addEventListener("click",()=>{
+  current=btn.dataset.filter;
+  document.querySelectorAll(".filter").forEach(x=>x.setAttribute("aria-pressed",String(x===btn)));
+  render();
+}));
+fetch("./signals.json",{cache:"no-store"})
+  .then(res=>{if(!res.ok)throw Error("HTTP "+res.status);return res.json();})
+  .then(feed=>{
+    if(feed.schema_version!==2||feed.symbol!=="159680.SZ"||
+       feed.account_mode!=="USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED"||
+       !Array.isArray(feed.entries))throw Error("不支持的信号格式");
+    entries=feed.entries.slice().sort((a,b)=>b.market_date.localeCompare(a.market_date));
+    $("day-count").textContent=String(entries.length);
+    $("latest").textContent=entries.length?
+      "最新核验交易日："+entries[0].market_date+" · "+entries[0].signal+" · "+(entries[0].timeliness==="HISTORICAL_ONLY"?"历史回算，不可追单":"下一开盘需复核") :
+      "新账本信号等待收盘行情核验；原纸面策略记录已从本看板移出。";
+    render();
+  }).catch(()=>{$("day-count").textContent="—";$("cards").innerHTML='<div class="empty">信号数据暂不可用；不会根据旧价位推算建议。</div>';});
+</script>
 </body>
 </html>
