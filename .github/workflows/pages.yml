@@ -41,11 +41,21 @@ jobs:
                    "strategy_rung","ledger_freshness","reporting_basis",
                    "capital_basis","minimum_fee_warning","reason",
                    "run_url","source_verified"}
-          forbidden=("execution_price_cny","quantity_shares","commission_cny",
+          forbidden={"execution_price_cny","quantity_shares","commission_cny",
                      "cost_basis","average_cost","cash_cny","notional_cny",
-                     "grid_anchor","private/positions/","reported_fills")
-          text=json.dumps(data,ensure_ascii=False).lower()
-          assert all(s not in text for s in forbidden), "sensitive real fill data in public feed"
+                     "grid_anchor","private/positions/","reported_fills"}
+          # Inspect names of JSON fields rather than substrings of legal
+          # categorical descriptions, such as USER_REPORTED_FILLS_... .
+          def walk_keys(obj):
+              if isinstance(obj,dict):
+                  for key,value in obj.items():
+                      yield key.lower()
+                      yield from walk_keys(value)
+              elif isinstance(obj,list):
+                  for item in obj:
+                      yield from walk_keys(item)
+          exposed=set(walk_keys(data))
+          assert not exposed.intersection(forbidden), "sensitive real fill field in public feed"
           seen=set()
           for e in entries:
               assert set(e)==allowed, "unapproved public schema fields"
