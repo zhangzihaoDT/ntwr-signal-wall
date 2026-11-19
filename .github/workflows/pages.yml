@@ -7,6 +7,8 @@ on:
       - 'index.html'
       - 'signals.json'
       - 'simulation.json'
+      - 'trend-563030.html'
+      - 'trend-563030.json'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -104,10 +106,40 @@ jobs:
               assert word not in text
           print('PASS: four privacy-safe simulated comparison cards')
           PY
+      - name: Validate independent 563030 SMA200 research feed
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          page = Path('trend-563030.html')
+          feed_file = Path('trend-563030.json')
+          assert page.is_file() and page.stat().st_size > 0, 'trend page missing'
+          assert feed_file.is_file() and feed_file.stat().st_size > 0, 'trend JSON missing'
+          text = page.read_text(encoding='utf-8')
+          assert 'trend-563030.json' in text and 'SMA200' in text
+          feed = json.loads(feed_file.read_text(encoding='utf-8'))
+          assert feed['schema_version'] == 1 and feed['symbol'] == '563030.SH'
+          assert isinstance(feed['entries'], list) and feed['entries'], 'trend feed empty'
+          allowed = {'schema_version','symbol','strategy_id','account_mode','status',
+                     'market_date','signal','signal_timeliness','close_market',
+                     'sma200','sma200_deviation_pct','trend_state','stock_weight_pct',
+                     'target_weight_pct','next_weekday','source_status','reason',
+                     'commission_model','simulation_start'}
+          for record in feed['entries']:
+              assert set(record) == allowed, 'trend public field allowlist violated'
+              assert record['strategy_id'] == 'trend_sma200'
+              assert record['account_mode'] == 'PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED'
+              assert record['source_status'] == 'PARTIAL'
+              assert record['signal'] in {'BUY','SELL','HOLD','NO_SIGNAL'}
+              if record['status'] == 'BLOCKED':
+                  assert record['signal'] == 'NO_SIGNAL'
+          print('PASS: SMA200 563030 independent paper signal page and feed')
+          PY
       - name: Assemble public-only website
         run: |
           mkdir -p public
-          cp index.html signals.json simulation.json public/
+          cp index.html signals.json simulation.json trend-563030.html trend-563030.json public/
+          test -s public/trend-563030.html && test -s public/trend-563030.json
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
