@@ -1,0 +1,27 @@
+{
+  "entries": [
+    {
+      "account_mode": "PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED",
+      "close_market": "1.254",
+      "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
+      "market_date": "2026-11-19",
+      "next_weekday": "2026-11-20",
+      "reason": "Official strategy T-close / T+1-open paper intent. No audited PASS source gate, no broker order; minimum 5 CNY fee is NOT modeled.",
+      "schema_version": 1,
+      "signal": "HOLD",
+      "signal_timeliness": "PAPER_NEXT_OPEN_INTENT",
+      "simulation_start": "2026-11-19",
+      "sma200": "1.5281",
+      "sma200_deviation_pct": "-17.94",
+      "source_status": "PARTIAL",
+      "status": "OBSERVATION_ONLY",
+      "stock_weight_pct": "0.00",
+      "strategy_id": "trend_sma200",
+      "symbol": "563030.SH",
+      "target_weight_pct": "0.00",
+      "trend_state": "DOWNTREND"
+    }
+  ],
+  "schema_version": 1,
+  "symbol": "563030.SH"
+}
