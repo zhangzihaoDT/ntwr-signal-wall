@@ -2,27 +2,6 @@
   "entries": [
     {
       "account_mode": "PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED",
-      "close_market": null,
-      "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
-      "market_date": "2026-11-20",
-      "next_weekday": "2026-11-23",
-      "reason": "outside_completed_shanghai_market_session",
-      "schema_version": 1,
-      "signal": "NO_SIGNAL",
-      "signal_timeliness": "NO_SIGNAL",
-      "simulation_start": "2026-11-19",
-      "sma200": null,
-      "sma200_deviation_pct": null,
-      "source_status": "PARTIAL",
-      "status": "BLOCKED",
-      "stock_weight_pct": null,
-      "strategy_id": "trend_sma200",
-      "symbol": "563030.SH",
-      "target_weight_pct": null,
-      "trend_state": "UNVERIFIED"
-    },
-    {
-      "account_mode": "PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED",
       "close_market": "1.254",
       "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
       "market_date": "2026-11-19",
