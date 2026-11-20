@@ -9,6 +9,7 @@ on:
       - 'simulation.json'
       - 'trend-563030.html'
       - 'trend-563030.json'
+      - 'shared-ui.css'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -138,8 +139,23 @@ jobs:
       - name: Assemble public-only website
         run: |
           mkdir -p public
-          cp index.html signals.json simulation.json trend-563030.html trend-563030.json public/
+          cp index.html signals.json simulation.json trend-563030.html trend-563030.json shared-ui.css public/
           test -s public/trend-563030.html && test -s public/trend-563030.json
+          test -s public/shared-ui.css
+          python3 - <<'PY'
+          from pathlib import Path
+          css=Path("public/shared-ui.css").read_text(encoding="utf-8")
+          assert "--page-width:1230px" in css
+          for name in ("index.html","trend-563030.html"):
+              page=Path("public",name).read_text(encoding="utf-8")
+              assert 'href="./shared-ui.css"' in page
+              assert 'class="shell"' in page
+              assert 'class="hero"' in page
+              assert 'class="nav"' in page
+              assert 'class="grid"' in page
+              assert page.count('<style>')==0, "divergent inline CSS: "+name
+          print("PASS: both monitors share one width, navigation, cards and responsive stylesheet")
+          PY
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
