@@ -5,60 +5,29 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="563030.SH SMA200 趋势策略独立模拟监控，不连接券商，不显示真实持仓。">
 <title>563030 · SMA200 趋势监控 | 双策略信号墙</title>
-<style>
-*{box-sizing:border-box}:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft Yahei",sans-serif;background:#f6f7f4;color:#263631}
-body{margin:0}a{color:inherit;text-decoration:none}
-main{max-width:1060px;margin:0 auto;padding:22px 24px 60px}
-nav{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 0 28px}
-.brand{font-size:13px;font-weight:800;letter-spacing:.1em}
-.links{display:flex;gap:8px;flex-wrap:wrap}
-.link{border:1px solid #cfdbd3;border-radius:20px;padding:10px 14px;font-size:12px}
-.link.active{background:#263e36;color:white}
-.hero{padding:36px 40px;background:#263e36;color:white;border-radius:24px}
-.eyebrow{font-size:12px;color:#9fd5c4;letter-spacing:.1em}
-h1{font-size:clamp(28px,4.3vw,48px);margin:14px 0}
-.hero p{color:#d3e4db;font-size:13px;line-height:1.9;max-width:760px}
-h2{font-size:22px;margin:30px 0 12px}
-.state{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
-.chip{font-size:12px;border:1px solid #7b9f8c;border-radius:25px;padding:7px 11px}
-.section{font-size:13px;color:#66796e;line-height:1.8}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:22px 0}
-.card{background:white;border:1px solid #e0e8df;border-radius:16px;padding:21px;min-width:0}
-.date{color:#6c8073;font-size:12px;font-weight:650}
-.tag{display:inline-block;background:#e9f2ee;color:#456657;font-size:10px;padding:5px 8px;border-radius:14px;margin-bottom:10px}
-.signal{font-weight:850;font-size:40px;line-height:1.3;letter-spacing:-.04em}
-.BUY .signal{color:#24795c}.SELL .signal{color:#ad6c36}.HOLD .signal{color:#60776d}.NO_SIGNAL .signal{color:#a65f5f}
-.data{margin-top:16px;padding:12px 0;border-top:1px solid #e5ebe5;display:flex;justify-content:space-between;font-size:12px;gap:12px}
-.data strong{font-variant-numeric:tabular-nums}
-.warning{background:#f1f3ed;border-radius:12px;padding:15px;color:#657366;font-size:12px;line-height:1.8}
-.empty{padding:50px 30px;text-align:center;border:1px dashed #bfcfc3;border-radius:16px;color:#647568}
-footer{font-size:12px;color:#728278;line-height:1.9;border-top:1px solid #d9e3db;padding-top:25px;margin-top:28px}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){main{padding:14px 15px 35px}.hero{padding:24px}.grid{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="./shared-ui.css">
 </head>
 <body>
-<main>
-<nav><span class="brand">双策略 · 每日监控</span><div class="links">
-<a class="link" href="./index.html">159680 · 网格</a>
-<a class="link active" href="./trend-563030.html" aria-current="page">563030 · 趋势</a>
-</div></nav>
+<div class="shell">
+<nav class="nav" aria-label="双策略导航"><span class="logo">双策略 / SIGNAL WALL</span><div class="nav-actions"><a class="nav-link" href="./index.html">159680 · 网格监控</a><a class="nav-link" href="./trend-563030.html" aria-current="page">563030 · 趋势监控</a><a class="nav-link nav-link--secondary" href="https://github.com/zhangzihaoDT/grid-trading/actions/workflows/sma200-563030-daily.yml" target="_blank" rel="noreferrer">查看运行记录</a></div></nav>
 <header class="hero">
+<div>
 <div class="eyebrow">563030.SH · SMA200 V1.0 · 独立模拟，不连接券商</div>
 <h1>中证500 · 趋势策略监控</h1>
 <p>使用私有 grid-trading 仓库中的正式 trend_sma200 规则。从 2026-11-19 独立零仓模拟起跑：收盘高于 SMA200 才可能生成下一开盘的买入意图；首次成交含模拟佣金不超 2%，之后在趋势继续成立时才按策略尝试补仓。下方是模拟信号，不是实际交易记录。</p>
 <div class="state"><span class="chip">独立模拟账户 · 初始零仓</span><span class="chip">行情尚未完成全部核验（PARTIAL）</span><span class="chip">不自动买卖</span><span class="chip">模拟费率万分之三，未计每笔最低5元</span></div>
+</div>
+<div class="hero-stats"><div><div class="big-number" id="day-count">—</div><div class="subtle">已记录模拟交易日 / RECORDED DAYS</div></div></div>
 </header>
-<h2>最新监控状态</h2>
-<p class="section" id="latest">正在读取每日监控…</p>
+<section class="intro"><h2>最新交易信号</h2><p id="latest">正在读取每日监控…</p></section>
 <div id="cards" class="grid" aria-live="polite"><div class="empty">尚未收到核验后的模拟监控数据。</div></div>
 <div class="warning"><strong>怎么看这些卡片：</strong>「保持空仓」表示目前没有买入条件；「模拟买入／模拟卖出」表示当天收盘后出现了信号，最早只能在下一个交易日开盘模拟执行；「数据不足」表示行情核验没通过，不能当作观望信号。<strong>这不是证券账户的真实委托。</strong>目前行情尚未通过完整核验；模拟手续费仅按成交额万分之三计算，没有加入券商每笔最低5元费用，真实下单需要重新核对。</div>
-<footer>
+<footer class="footer">
 <a href="https://github.com/zhangzihaoDT/grid-trading" target="_blank" rel="noreferrer">私有研究仓库（限授权访问）</a> ·
 <a href="./index.html">返回中证1000网格监控</a><br>
 站点仅展示模拟仓位百分比、趋势价格、信号和数据状态，不展示真实持仓、买卖价格、成交份额、手续费或成本。两个监控相互独立，不共用实际账本，也不构成投资建议。
 </footer>
-</main>
+</div>
 <script>
 "use strict";
 const el=id=>document.getElementById(id);
@@ -94,21 +63,22 @@ function reasonText(r){
 }
 function item(r){
  const signal=["BUY","SELL","HOLD","NO_SIGNAL"].includes(r.signal)?r.signal:"NO_SIGNAL";
- const label=r.status==="BLOCKED"?"数据校验没有通过，暂时无法生成交易信号"
+ const label=r.status==="BLOCKED"?"数据校验没通过，暂时无法计算信号"
    :r.signal==="HOLD"?(Number(r.stock_weight_pct||0)===0?"没有买入条件，继续保持空仓":"没有新的买卖条件，继续持有")
-   :"收盘后出现模拟交易信号，下个交易日开盘再判断";
- return '<article class="card '+signal+'"><div class="date">'+esc(r.market_date)+'</div>'
-   +'<div class="tag">'+esc(statusNames[r.status]||"状态待确认")+'</div>'
+   :"收盘出现模拟交易信号，下一交易日开盘复核";
+ const number=v=>v==null?"—":v+"%";
+ return '<article class="card '+signal+'">'
+   +'<div class="card-top"><span class="date">'+esc(r.market_date)+'</span><span class="tag">'+esc(statusNames[r.status]||"状态待确认")+'</span></div>'
    +'<div class="signal">'+esc(labelSignal(r))+'</div>'
-   +'<div class="section">'+esc(label)+'</div>'
-   +'<div class="data"><span>当天收盘价</span><strong>'+esc(r.close_market)+'</strong></div>'
-   +'<div class="data"><span>200日均线</span><strong>'+esc(r.sma200)+'</strong></div>'
-   +'<div class="data"><span>收盘价相对均线</span><strong>'+esc(r.sma200_deviation_pct==null?"—":r.sma200_deviation_pct+"%")+'</strong></div>'
-   +'<div class="data"><span>模拟账户当前仓位</span><strong>'+esc(r.stock_weight_pct==null?"—":r.stock_weight_pct+"%")+'</strong></div>'
-   +'<div class="data"><span>模拟策略目标仓位</span><strong>'+esc(r.target_weight_pct==null?"—":r.target_weight_pct+"%")+'</strong></div>'
-   +'<div class="data"><span>趋势判断</span><strong>'+esc(trendNames[r.trend_state]||"未知")+'</strong></div>'
-   +'<div class="data"><span>参考下一工作日</span><strong>'+esc(r.next_weekday)+'</strong></div>'
-   +'<div class="section" style="margin-top:15px">'+esc(reasonText(r))+'</div></article>';
+   +'<div class="signal-sub">'+esc(label)+'</div>'
+   +'<div class="weights"><div><div class="label">当前模拟仓位</div><div class="val">'+esc(number(r.stock_weight_pct))+'</div></div>'
+   +'<div><div class="label">策略目标仓位</div><div class="val">'+esc(number(r.target_weight_pct))+'</div></div></div>'
+   +'<div class="row"><span>当日收盘价</span><strong>'+esc(r.close_market==null?"—":"¥"+r.close_market)+'</strong></div>'
+   +'<div class="row"><span>200日均线</span><strong>'+esc(r.sma200==null?"—":"¥"+r.sma200)+'</strong></div>'
+   +'<div class="row"><span>收盘价相对均线</span><strong>'+esc(number(r.sma200_deviation_pct))+'</strong></div>'
+   +'<div class="row"><span>趋势判断</span><strong>'+esc(trendNames[r.trend_state]||"尚未确认")+'</strong></div>'
+   +'<div class="row"><span>参考下一工作日</span><strong>'+esc(r.next_weekday)+'</strong></div>'
+   +'<div class="disclaimer">'+esc(reasonText(r))+'</div></article>';
 }
 
 fetch("./trend-563030.json",{cache:"no-store"})
@@ -118,12 +88,13 @@ fetch("./trend-563030.json",{cache:"no-store"})
    const records=feed.entries;
    if(!records.length)throw Error("no records");
    el("cards").innerHTML=records.map(item).join("");
+   el("day-count").textContent=String(records.length);
    const last=records[0];
    el("latest").textContent="最近已记录的交易日："+last.market_date+" · "+labelSignal(last)+
      " · "+(statusNames[last.status]||"状态待确认")+
      "。行情仍待完成全部核验（PARTIAL）。这是模拟账户的历史记录，不表示今天可以下单。";
  })
- .catch(()=>{el("latest").textContent="尚未收到可以展示的趋势监控数据；不得据此买入。";
+ .catch(()=>{el("day-count").textContent="—";el("latest").textContent="尚未收到可以展示的趋势监控数据；不得据此买入。";
              el("cards").innerHTML='<div class="empty">趋势信号源暂未准备好，等待独立监控完成。</div>';});
 </script>
 </body>
