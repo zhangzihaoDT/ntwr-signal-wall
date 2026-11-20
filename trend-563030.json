@@ -6,7 +6,7 @@
       "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
       "market_date": "2026-11-19",
       "next_weekday": "2026-11-20",
-      "reason": "Official strategy T-close / T+1-open paper intent. No audited PASS source gate, no broker order; minimum 5 CNY fee is NOT modeled.",
+      "reason": "收盘后没有触发买入条件，模拟账户继续空仓。按照项目正式的SMA200规则计算；行情尚未完成全部核验，没有连接券商，也不会自动下单；模拟手续费只按成交额的万分之三计算，没有计入每笔最低5元的实际收费。",
       "schema_version": 1,
       "signal": "HOLD",
       "signal_timeliness": "PAPER_NEXT_OPEN_INTENT",
