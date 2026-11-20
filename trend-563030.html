@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="description" content="563030.SH SMA200 趋势策略独立模拟监控，不连接券商，不显示真实持仓。">
-<title>563030 · SMA200 趋势监控 | Dual Strategy Signal Wall</title>
+<title>563030 · SMA200 趋势监控 | 双策略信号墙</title>
 <style>
 *{box-sizing:border-box}:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft Yahei",sans-serif;background:#f6f7f4;color:#263631}
 body{margin:0}a{color:inherit;text-decoration:none}
@@ -39,20 +39,20 @@ footer{font-size:12px;color:#728278;line-height:1.9;border-top:1px solid #d9e3db
 </head>
 <body>
 <main>
-<nav><span class="brand">DUAL STRATEGY / SIGNAL WALL</span><div class="links">
+<nav><span class="brand">双策略 · 每日监控</span><div class="links">
 <a class="link" href="./index.html">159680 · 网格</a>
 <a class="link active" href="./trend-563030.html" aria-current="page">563030 · 趋势</a>
 </div></nav>
 <header class="hero">
-<div class="eyebrow">563030.SH · SMA200 V1.0 · PAPER / NO BROKER</div>
+<div class="eyebrow">563030.SH · SMA200 V1.0 · 独立模拟，不连接券商</div>
 <h1>中证500 · 趋势策略监控</h1>
 <p>使用私有 grid-trading 仓库中的正式 trend_sma200 规则。从 2026-11-19 独立零仓模拟起跑：收盘高于 SMA200 才可能生成下一开盘的买入意图；首次成交含模拟佣金不超 2%，之后在趋势继续成立时才按策略尝试补仓。下方是模拟信号，不是实际交易记录。</p>
-<div class="state"><span class="chip">独立模拟账户 · 初始零仓</span><span class="chip">数据 Gate：PARTIAL</span><span class="chip">不自动交易</span><span class="chip">3bp 研究费率，未计最低佣金</span></div>
+<div class="state"><span class="chip">独立模拟账户 · 初始零仓</span><span class="chip">行情尚未完成全部核验（PARTIAL）</span><span class="chip">不自动买卖</span><span class="chip">模拟费率万分之三，未计每笔最低5元</span></div>
 </header>
 <h2>最新监控状态</h2>
 <p class="section" id="latest">正在读取每日监控…</p>
 <div id="cards" class="grid" aria-live="polite"><div class="empty">尚未收到核验后的模拟监控数据。</div></div>
-<div class="warning">所有 BUY / SELL 均为研究性纸面意图。因历史行情尚为 PARTIAL、来源并非完全独立且未完成公司行为权威复核，不是已获批准的实盘指令。信号在 T 日收盘计算，只能在 T+1 开盘重新评估执行；下单前需核对交易日、整手、券商最低佣金与真实可用资金。NO_SIGNAL 表示数据阻断，不能解释成 HOLD。</div>
+<div class="warning"><strong>怎么看这些卡片：</strong>「保持空仓」表示目前没有买入条件；「模拟买入／模拟卖出」表示当天收盘后出现了信号，最早只能在下一个交易日开盘模拟执行；「数据不足」表示行情核验没通过，不能当作观望信号。<strong>这不是证券账户的真实委托。</strong>目前行情尚未通过完整核验；模拟手续费仅按成交额万分之三计算，没有加入券商每笔最低5元费用，真实下单需要重新核对。</div>
 <footer>
 <a href="https://github.com/zhangzihaoDT/grid-trading" target="_blank" rel="noreferrer">私有研究仓库（限授权访问）</a> ·
 <a href="./index.html">返回中证1000网格监控</a><br>
@@ -63,22 +63,54 @@ footer{font-size:12px;color:#728278;line-height:1.9;border-top:1px solid #d9e3db
 "use strict";
 const el=id=>document.getElementById(id);
 const esc=v=>String(v??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function item(r){
- const label=r.status==="BLOCKED"?"数据阻断 · 暂无有效信号":r.signal==="HOLD"?"趋势规则不要求调仓":"仅模拟信号 · 下一开盘复核";
- const safeSignal=["BUY","SELL","HOLD","NO_SIGNAL"].includes(r.signal)?r.signal:"NO_SIGNAL";
- return '<article class="card '+safeSignal+'"><div class="date">'+esc(r.market_date)+'</div>'
-   +'<div class="tag">'+esc(r.status)+'</div>'
-   +'<div class="signal">'+esc(safeSignal)+'</div>'
-   +'<div class="section">'+esc(label)+'</div>'
-   +'<div class="data"><span>收盘价</span><strong>'+esc(r.close_market)+'</strong></div>'
-   +'<div class="data"><span>SMA200</span><strong>'+esc(r.sma200)+'</strong></div>'
-   +'<div class="data"><span>相对均线</span><strong>'+esc(r.sma200_deviation_pct)+'%</strong></div>'
-   +'<div class="data"><span>模拟仓位</span><strong>'+esc(r.stock_weight_pct)+'%</strong></div>'
-   +'<div class="data"><span>参考目标仓位</span><strong>'+esc(r.target_weight_pct)+'%</strong></div>'
-   +'<div class="data"><span>趋势状态</span><strong>'+esc(r.trend_state)+'</strong></div>'
-   +'<div class="data"><span>预计下一工作日</span><strong>'+esc(r.next_weekday)+'</strong></div>'
-   +'<div class="section" style="margin-top:15px">'+esc(r.reason)+'</div></article>';
+const signalNames={BUY:"模拟买入",SELL:"模拟卖出",NO_SIGNAL:"数据不足"};
+const statusNames={OBSERVATION_ONLY:"已计算·仅供观察",BLOCKED:"行情校验未通过"};
+const trendNames={UPTREND:"站在200日均线上方",DOWNTREND:"低于200日均线",UNVERIFIED:"尚未核验"};
+const errorReasons={
+  outside_completed_shanghai_market_session:"运行时当天还没收盘，不能提前计算信号。",
+  requested_market_date_not_yet_completed:"行情日期尚未收盘，无法计算当天信号。",
+  no_completed_matching_bar_for_requested_date:"还没有取得这个交易日完整且一致的收盘行情。",
+  raw_qfq_calendar_mismatch:"普通行情与复权行情的交易日期不一致。",
+  insufficient_200_day_warmup:"历史收盘数据不足200个有效交易日，不能计算200日均线。",
+  unreviewed_raw_adjustment_discrepancy:"普通行情与复权行情有差异，需要检查分红、拆分等情况。",
+  independent_source_missing_latest_three_bars:"第二个行情来源缺少最近交易日的数据。",
+  independent_source_disagreement_latest_three_bars:"两个行情来源的价格不一致，需要核对后才能产生信号。",
+  provider_unavailable:"行情来源暂时无法访问。"
+};
+function labelSignal(r){
+  if(r.signal==="HOLD")return Number(r.stock_weight_pct||0)===0?"保持空仓":"继续持有";
+  return signalNames[r.signal]||"数据不足";
 }
+function reasonText(r){
+  const raw=String(r.reason||"");
+  if(r.status==="BLOCKED"){
+    const short=raw.split(":")[0];
+    return errorReasons[short]||"当天行情或程序校验没有通过，因此暂停提供交易信号；可到私有仓库查看详细原因。";
+  }
+  if(raw.startsWith("Official strategy T-close / T+1-open")){
+    return "该交易日收盘后按正式SMA200策略计算模拟信号；行情尚未完成全部核验，不会自动下单，模拟手续费未计入券商每笔最低5元收费。";
+  }
+  return raw||"仅作为模拟研究的交易信号，不代表真实委托或成交。";
+}
+function item(r){
+ const signal=["BUY","SELL","HOLD","NO_SIGNAL"].includes(r.signal)?r.signal:"NO_SIGNAL";
+ const label=r.status==="BLOCKED"?"数据校验没有通过，暂时无法生成交易信号"
+   :r.signal==="HOLD"?(Number(r.stock_weight_pct||0)===0?"没有买入条件，继续保持空仓":"没有新的买卖条件，继续持有")
+   :"收盘后出现模拟交易信号，下个交易日开盘再判断";
+ return '<article class="card '+signal+'"><div class="date">'+esc(r.market_date)+'</div>'
+   +'<div class="tag">'+esc(statusNames[r.status]||"状态待确认")+'</div>'
+   +'<div class="signal">'+esc(labelSignal(r))+'</div>'
+   +'<div class="section">'+esc(label)+'</div>'
+   +'<div class="data"><span>当天收盘价</span><strong>'+esc(r.close_market)+'</strong></div>'
+   +'<div class="data"><span>200日均线</span><strong>'+esc(r.sma200)+'</strong></div>'
+   +'<div class="data"><span>收盘价相对均线</span><strong>'+esc(r.sma200_deviation_pct==null?"—":r.sma200_deviation_pct+"%")+'</strong></div>'
+   +'<div class="data"><span>模拟账户当前仓位</span><strong>'+esc(r.stock_weight_pct==null?"—":r.stock_weight_pct+"%")+'</strong></div>'
+   +'<div class="data"><span>模拟策略目标仓位</span><strong>'+esc(r.target_weight_pct==null?"—":r.target_weight_pct+"%")+'</strong></div>'
+   +'<div class="data"><span>趋势判断</span><strong>'+esc(trendNames[r.trend_state]||"未知")+'</strong></div>'
+   +'<div class="data"><span>参考下一工作日</span><strong>'+esc(r.next_weekday)+'</strong></div>'
+   +'<div class="section" style="margin-top:15px">'+esc(reasonText(r))+'</div></article>';
+}
+
 fetch("./trend-563030.json",{cache:"no-store"})
  .then(r=>{if(!r.ok)throw Error("feed missing");return r.json()})
  .then(feed=>{
@@ -87,8 +119,9 @@ fetch("./trend-563030.json",{cache:"no-store"})
    if(!records.length)throw Error("no records");
    el("cards").innerHTML=records.map(item).join("");
    const last=records[0];
-   el("latest").textContent="最近监控日期："+last.market_date+" · "+last.signal+
-     " · "+last.status+" · 数据 Gate "+last.source_status+"。历史信号仅供回看；真实下单须单独确认。";
+   el("latest").textContent="最近已记录的交易日："+last.market_date+" · "+labelSignal(last)+
+     " · "+(statusNames[last.status]||"状态待确认")+
+     "。行情仍待完成全部核验（PARTIAL）。这是模拟账户的历史记录，不表示今天可以下单。";
  })
  .catch(()=>{el("latest").textContent="尚未收到可以展示的趋势监控数据；不得据此买入。";
              el("cards").innerHTML='<div class="empty">趋势信号源暂未准备好，等待独立监控完成。</div>';});
