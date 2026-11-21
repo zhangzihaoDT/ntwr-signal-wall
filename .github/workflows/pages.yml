@@ -44,6 +44,8 @@ jobs:
                    "strategy_rung","ledger_freshness","reporting_basis",
                    "capital_basis","minimum_fee_warning","reason",
                    "run_url","source_verified"}
+          extra_rungs={"triggered_buy_zones","next_untriggered_buy_zone"}
+          extended=allowed|extra_rungs
           forbidden={"execution_price_cny","quantity_shares","commission_cny",
                      "cost_basis","average_cost","cash_cny","notional_cny",
                      "grid_anchor","private/positions/","reported_fills"}
@@ -61,7 +63,7 @@ jobs:
           assert not exposed.intersection(forbidden), "sensitive real fill field in public feed"
           seen=set()
           for e in entries:
-              assert set(e)==allowed, "unapproved public schema fields"
+              assert set(e) in (allowed,extended), "unapproved public schema fields"
               d=e["market_date"]
               assert d not in seen and d>="2026-11-18"
               seen.add(d)
@@ -82,6 +84,33 @@ jobs:
                   assert set(z)=={"low","high","direction","precision"}
                   assert Decimal(z["high"])-Decimal(z["low"])==Decimal("0.01")
                   assert z["precision"]=="PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+              if set(e)==extended:
+                  triggered=e["triggered_buy_zones"]
+                  upcoming=e["next_untriggered_buy_zone"]
+                  assert isinstance(triggered,list) and len(triggered)<=8
+                  assert all(set(item)=={"rung","zone"} and
+                             item["rung"] in {"G1","G2","G3","G4","G5","G6","G7","G8"}
+                             for item in triggered)
+                  rungs=[int(item["rung"][1:]) for item in triggered]
+                  assert rungs==sorted(set(rungs))
+                  if e["signal"]!="BUY": assert not triggered
+                  if triggered:
+                      assert e["strategy_rung"]==triggered[0]["rung"]
+                      assert e["next_buy_zone"]==triggered[0]["zone"]
+                  if upcoming is not None:
+                      assert set(upcoming)=={"rung","zone"}
+                      assert upcoming["rung"] in {"G1","G2","G3","G4","G5","G6","G7","G8"}
+                      if rungs: assert int(upcoming["rung"][1:])>max(rungs)
+                  for item in triggered+([upcoming] if upcoming is not None else []):
+                      z=item["zone"]
+                      assert set(z)=={"low","high","direction","precision"}
+                      assert Decimal(z["high"])-Decimal(z["low"])==Decimal("0.01")
+                      assert Decimal(z["low"]).as_tuple().exponent>=-2
+                      assert Decimal(z["high"]).as_tuple().exponent>=-2
+                      assert z["precision"]=="PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+                      assert z["direction"] in (
+                          "BUY_IF_NEXT_OPEN_SATISFIES_PRIVATE_EXACT_LIMIT",
+                          "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE")
           assert entries==sorted(entries,key=lambda e:e["market_date"],reverse=True)
           print(f"Validated {len(entries)} privacy-safe actual-ledger signal cards.")
           PY
