@@ -54,18 +54,30 @@ function card(e){
   const label=e.signal==="BUY"?"买入条件已触发":e.signal==="SELL"?"卖出条件已触发":"当前无新交易条件";
   const date=esc(e.market_date);
   const fresh=e.ledger_freshness&&e.ledger_freshness.replace("USER_REPORTED_THROUGH_","");
+  const hasRungDetail=Array.isArray(e.triggered_buy_zones);
+  const triggered=hasRungDetail?e.triggered_buy_zones:(e.signal==="BUY"&&e.next_buy_zone?[{rung:e.strategy_rung,zone:e.next_buy_zone}]:[]);
+  const upcoming=hasRungDetail?e.next_untriggered_buy_zone:null;
+  const triggeredHTML=triggered.length?triggered.map(item=>
+    '<div class="rung-pill"><span class="rung-name">'+esc(item.rung)+'</span><span class="rung-band">'+priceZone(item.zone)+'</span></div>'
+  ).join(""):'<span class="zone-empty">本次未触发可执行买入档位</span>';
+  const upcomingHTML=upcoming?
+    '<span class="rung-name">'+esc(upcoming.rung)+'</span> <span class="zone">'+priceZone(upcoming.zone)+'</span>':
+    (hasRungDetail?'尚无更深的未触发档位':'历史卡片仅记录首档触发价');
   return '<article class="card '+esc(e.signal)+'">'
     +'<div class="card-top"><span class="date">'+date+'</span><span class="tag">'+(historic?'历史回算':'待下一开盘复核')+'</span></div>'
     +'<div class="signal">'+esc(e.signal)+'</div>'
-    +'<div class="signal-sub">'+label+' · '+esc(e.strategy_rung)+'</div>'
+    +'<div class="signal-sub">'+label+' · '+(triggered.length?triggered.map(x=>esc(x.rung)).join(' + '):esc(e.strategy_rung))+'</div>'
     +'<div class="weights"><div><div class="label">当前申报仓位（估计）</div><div class="val">'+esc(e.stock_weight_pct)+'%</div></div>'
     +'<div><div class="label">参考调整后仓位</div><div class="val">'+esc(e.reference_target_weight_pct)+'%</div></div></div>'
     +'<div class="row"><span>仓位参考变化</span><strong>'+esc(e.suggested_change_pp)+' pp</strong></div>'
     +'<div class="row"><span>已核验市场收盘价</span><strong>¥'+Number(e.close_market).toFixed(3)+'</strong></div>'
-    +'<div class="zones"><div><div class="zone-title">下一买入观察区间</div><div class="zone">'+priceZone(e.next_buy_zone)+'</div></div>'
-    +'<div><div class="zone-title">下一卖出观察区间</div><div class="zone">'+priceZone(e.next_sell_zone)+'</div></div></div>'
+    +'<div class="rung-sections"><div class="rung-section"><div class="zone-title">本次已触发的买入档位 · 各档触发价所在带</div>'
+    +'<div class="rung-list">'+triggeredHTML+'</div></div>'
+    +'<div class="zones"><div><div class="zone-title">尚未触发的下一买入档位</div><div class="zone-entry">'+upcomingHTML+'</div></div>'
+    +'<div><div class="zone-title">卖出触发价所在带</div><div class="zone-entry">'+priceZone(e.next_sell_zone)+'</div></div></div>'
+    +'<div class="price-guidance">本次触发档位可在低于各自精确阈值的开盘价下继续核验；显示的0.01元价带只标记阈值位置，<strong>不是买入区间或可照抄的委托上限</strong>。开盘跳空、整手、资金和手续费可改变实际执行结果。</div></div>'
     +'<div class="row"><span>预计下一工作日</span><strong>'+esc(e.next_weekday)+'</strong></div>'
-    +'<div class="disclaimer">'+esc(e.reason)+' 下单前须在私有账本核对精确阈值、实际费用与最新成交。价格带仅供观察，不构成可直接成交的委托价。</div>'
+    +'<div class="disclaimer">'+esc(e.reason)+' 下单前须在私有账本核对精确阈值、实际费用与最新成交。不连接券商，不自动下单。</div>'
     +'<details><summary>信号依据及公开边界</summary><div style="padding-top:12px">持仓基于用户最后一次申报、未连接券商；最近记录更新日期：'+esc(fresh||"未知")+'。'
     +'策略版本：'+esc(e.strategy_version)+'。买入曾观测到最低佣金，卖出费用未核实。'
     +(historic?' 当前执行窗口已过去，不能追单。':' 下一开盘需要重新核对可成交条件。')
@@ -82,7 +94,7 @@ function simulatedCard(e){
     +'<div><div class="label">假设次开盘参考仓位</div><div class="val">'+esc(e.reference_target_weight_pct)+'%</div></div></div>'
     +'<div class="row"><span>模拟仓位调整</span><strong>'+esc(e.suggested_change_pp)+' pp</strong></div>'
     +'<div class="row"><span>历史市场收盘价</span><strong>¥'+Number(e.close_market).toFixed(3)+'</strong></div>'
-    +'<div class="zones"><div><div class="zone-title">下一模拟买入观察带</div><div class="zone">'+priceZone(e.next_buy_zone)+'</div></div>'
+    +'<div class="zones"><div><div class="zone-title">模拟首档买入触发价所在带</div><div class="zone">'+priceZone(e.next_buy_zone)+'</div></div>'
     +'<div><div class="zone-title">下一模拟卖出观察带</div><div class="zone">'+priceZone(e.next_sell_zone)+'</div></div></div>'
     +'<div class="row"><span>历史信号的下一交易日</span><strong>'+esc(e.next_weekday)+'</strong></div>'
     +'<div class="disclaimer">'+note+'。该信号为HISTORICAL_ONLY，不可追单；假设佣金为3bp，实盘最低佣金与整手偏差可能改变净收益。</div>'

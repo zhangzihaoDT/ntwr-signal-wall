@@ -52,6 +52,17 @@ h1{font-size:clamp(32px,4.3vw,58px);letter-spacing:-.045em;line-height:1.15;marg
 .zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .zone-title{font-size:10px;letter-spacing:.05em;color:#809086}
 .zone{font-size:18px;font-weight:800;margin-top:4px;color:#304c3d;letter-spacing:-.02em;overflow-wrap:anywhere}
+.rung-sections{display:flex;flex-direction:column;gap:15px}
+.rung-section{display:flex;flex-direction:column;gap:8px}
+.rung-list{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-start}
+.rung-pill{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #d3e8d8;background:#f1f8f1;border-radius:12px;min-width:0}
+.rung-name{font-size:13px;font-weight:800;color:#246542;white-space:nowrap}
+.rung-band{font-size:16px;font-weight:760;color:#304c3d;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.zone-entry{margin-top:6px;min-height:23px;font-size:14px;font-weight:650;line-height:1.6;overflow-wrap:anywhere}
+.zone-entry .zone{display:inline;font-size:16px;margin-left:5px}
+.zone-empty{font-size:13px;color:#6c7c73}
+.price-guidance{font-size:12px;color:#506659;line-height:1.7;padding:10px 12px;border-left:2px solid #a8c7b2;background:#f6f9f5;border-radius:0 8px 8px 0}
+
 .disclaimer{font-size:11px;color:#7b8b81;line-height:1.9;border-top:1px solid #ecf0ea;padding-top:12px}
 details{font-size:11px;color:#728178;line-height:1.75}
 summary{cursor:pointer;font-weight:700}
