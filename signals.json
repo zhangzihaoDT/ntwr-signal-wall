@@ -94,7 +94,27 @@
       "strategy_rung": "G1",
       "strategy_version": "NTWR-A V11.18-HS / user-reported position",
       "suggested_change_pp": "1.3",
-      "timeliness": "PENDING_NEXT_OPEN"
+      "timeliness": "PENDING_NEXT_OPEN",
+      "triggered_buy_zones": [
+        {
+          "rung": "G1",
+          "zone": {
+            "direction": "BUY_IF_NEXT_OPEN_SATISFIES_PRIVATE_EXACT_LIMIT",
+            "high": "1.33",
+            "low": "1.32",
+            "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+          }
+        }
+      ],
+      "next_untriggered_buy_zone": {
+        "rung": "G2",
+        "zone": {
+          "low": "1.29",
+          "high": "1.30",
+          "direction": "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE",
+          "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+        }
+      }
     },
     {
       "account_mode": "USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED",
@@ -127,7 +147,17 @@
       "strategy_rung": "NONE",
       "strategy_version": "NTWR-A V11.18-HS / user-reported position",
       "suggested_change_pp": "0.0",
-      "timeliness": "HISTORICAL_ONLY"
+      "timeliness": "HISTORICAL_ONLY",
+      "triggered_buy_zones": [],
+      "next_untriggered_buy_zone": {
+        "rung": "G1",
+        "zone": {
+          "direction": "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE",
+          "high": "1.33",
+          "low": "1.32",
+          "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+        }
+      }
     }
   ],
   "privacy": "DISPLAY_ONLY_ROUNDED_WEIGHT_AND_COARSE_PRICE_ZONES",
