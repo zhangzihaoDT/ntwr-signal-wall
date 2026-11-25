@@ -2,6 +2,27 @@
   "entries": [
     {
       "account_mode": "PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED",
+      "close_market": "1.189",
+      "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
+      "market_date": "2026-11-25",
+      "next_weekday": "2026-11-26",
+      "reason": "收盘后没有触发买入条件，模拟账户继续空仓。按照项目正式的SMA200规则计算；行情尚未完成全部核验，没有连接券商，也不会自动下单；模拟手续费只按成交额的万分之三计算，没有计入每笔最低5元的实际收费。",
+      "schema_version": 1,
+      "signal": "HOLD",
+      "signal_timeliness": "PAPER_NEXT_OPEN_INTENT",
+      "simulation_start": "2026-11-19",
+      "sma200": "1.5223",
+      "sma200_deviation_pct": "-21.89",
+      "source_status": "PARTIAL",
+      "status": "OBSERVATION_ONLY",
+      "stock_weight_pct": "0.00",
+      "strategy_id": "trend_sma200",
+      "symbol": "563030.SH",
+      "target_weight_pct": "0.00",
+      "trend_state": "DOWNTREND"
+    },
+    {
+      "account_mode": "PAPER_ZERO_HOLDINGS_FROM_2026_11_19_NOT_BROKER_CONNECTED",
       "close_market": "1.228",
       "commission_model": "PAPER_3BP_NO_MINIMUM_FEE",
       "market_date": "2026-11-24",
