@@ -4,6 +4,49 @@
     {
       "account_mode": "USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED",
       "capital_basis": "USER_DECLARED_REFERENCE_BUDGET",
+      "close_market": "1.335",
+      "ledger_freshness": "USER_REPORTED_THROUGH_2026-11-26",
+      "market_date": "2026-11-27",
+      "minimum_fee_warning": "BROKER_MINIMUM_BUY_FEE_OBSERVED_SELL_FEE_UNVERIFIED",
+      "next_buy_zone": {
+        "direction": "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE",
+        "high": "1.18",
+        "low": "1.17",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_sell_zone": {
+        "direction": "SELL_IF_NEXT_OPEN_SATISFIES_PRIVATE_EXACT_FLOOR",
+        "high": "1.27",
+        "low": "1.26",
+        "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+      },
+      "next_untriggered_buy_zone": {
+        "rung": "G5",
+        "zone": {
+          "direction": "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE",
+          "high": "1.18",
+          "low": "1.17",
+          "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
+        }
+      },
+      "next_weekday": "2026-11-30",
+      "policy": "ntwr_a_v11_18",
+      "reason": "卖出仅涉及用户已报告的实际持有档位；是否净盈利需核对实际最低卖出费用。",
+      "reference_target_weight_pct": "2.6",
+      "reporting_basis": "USER_REPORTED_FILLS_NOT_BROKER_VERIFIED_NO_ASSUMED_NEW_FILLS",
+      "run_url": "https://github.com/zhangzihaoDT/grid-trading/actions/runs/46057501363",
+      "signal": "SELL",
+      "source_verified": true,
+      "stock_weight_pct": "15.9",
+      "strategy_rung": "G4",
+      "strategy_version": "NTWR-A V11.18-HS / user-reported position",
+      "suggested_change_pp": "-13.2",
+      "timeliness": "PENDING_NEXT_OPEN",
+      "triggered_buy_zones": []
+    },
+    {
+      "account_mode": "USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED",
+      "capital_basis": "USER_DECLARED_REFERENCE_BUDGET",
       "close_market": "1.215",
       "ledger_freshness": "USER_REPORTED_THROUGH_2026-11-26",
       "market_date": "2026-11-26",
