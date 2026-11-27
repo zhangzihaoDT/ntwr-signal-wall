@@ -5,19 +5,19 @@
       "account_mode": "USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED",
       "capital_basis": "USER_DECLARED_REFERENCE_BUDGET",
       "close_market": "1.215",
-      "ledger_freshness": "USER_REPORTED_THROUGH_2026-11-23",
+      "ledger_freshness": "USER_REPORTED_THROUGH_2026-11-26",
       "market_date": "2026-11-26",
       "minimum_fee_warning": "BROKER_MINIMUM_BUY_FEE_OBSERVED_SELL_FEE_UNVERIFIED",
       "next_buy_zone": {
-        "direction": "BUY_IF_NEXT_OPEN_SATISFIES_PRIVATE_EXACT_LIMIT",
-        "high": "1.23",
-        "low": "1.22",
+        "direction": "BUY_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_ABOVE",
+        "high": "1.18",
+        "low": "1.17",
         "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
       },
       "next_sell_zone": {
         "direction": "SELL_IF_T_CLOSE_CROSSES_AND_NEXT_OPEN_NOT_BELOW",
-        "high": "1.30",
-        "low": "1.29",
+        "high": "1.27",
+        "low": "1.26",
         "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
       },
       "next_untriggered_buy_zone": {
@@ -31,28 +31,18 @@
       },
       "next_weekday": "2026-11-27",
       "policy": "ntwr_a_v11_18",
-      "reason": "价格已跨越未持有档位；建议仓位仅是假设次开盘满足价格/整手/现金限制后的模拟变化。",
-      "reference_target_weight_pct": "13.4",
+      "reason": "现有真实申报档位没有触发新的卖出或买入价格交叉。",
+      "reference_target_weight_pct": "14.7",
       "reporting_basis": "USER_REPORTED_FILLS_NOT_BROKER_VERIFIED_NO_ASSUMED_NEW_FILLS",
-      "run_url": "https://github.com/zhangzihaoDT/grid-trading/actions/runs/45885735788",
-      "signal": "BUY",
+      "run_url": "https://github.com/zhangzihaoDT/grid-trading/actions/runs/45916870909",
+      "signal": "HOLD",
       "source_verified": true,
-      "stock_weight_pct": "8.6",
-      "strategy_rung": "G4",
+      "stock_weight_pct": "14.7",
+      "strategy_rung": "NONE",
       "strategy_version": "NTWR-A V11.18-HS / user-reported position",
-      "suggested_change_pp": "4.9",
+      "suggested_change_pp": "0.0",
       "timeliness": "PENDING_NEXT_OPEN",
-      "triggered_buy_zones": [
-        {
-          "rung": "G4",
-          "zone": {
-            "direction": "BUY_IF_NEXT_OPEN_SATISFIES_PRIVATE_EXACT_LIMIT",
-            "high": "1.23",
-            "low": "1.22",
-            "precision": "PUBLIC_APPROXIMATE_ONLY_EXACT_RULE_PRIVATE"
-          }
-        }
-      ]
+      "triggered_buy_zones": []
     },
     {
       "account_mode": "USER_REPORTED_POSITION_SIGNAL_NOT_BROKER_CONNECTED",
